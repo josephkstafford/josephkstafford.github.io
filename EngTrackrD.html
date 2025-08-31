@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>EngTrackr — Detailed Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="EngTrackr case study — detailed report covering research, market & competition, strategy, roadmap, MVP scope, metrics, risks, and prototype." />
+
+  <!-- Fonts & icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/themify-icons.css"/>
+
+  <style>
+    /* ======= Design tokens ======= */
+    :root{
+      --ink:#0f172a; --muted:#475569; --bg:#ffffff; --card:#f7f7fb; --line:#e5e7eb;
+      --brand:#6366f1; --brand-ink:#1f2a6b; --cta:#111827;
+      --radius:14px; --shadow:0 4px 18px rgba(15,23,42,.08);
+      --header-h:72px; --content-w:1100px;
+    }
+
+    /* ======= Base ======= */
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink); background:var(--bg); line-height:1.6;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:var(--brand); text-decoration:none}
+    a:hover{opacity:.9}
+    img{max-width:100%; display:block}
+
+    /* ======= Layout ======= */
+    .container{max-width:var(--content-w); margin:0 auto; padding:0 20px}
+    section{scroll-margin-top:calc(var(--header-h) + 20px)}
+
+    /* ======= Chips & buttons ======= */
+    .chips{display:flex; gap:.5rem; flex-wrap:wrap}
+    .chip{background:#eef2ff; color:#3730a3; padding:.35rem .6rem; border-radius:999px; font-size:.8rem; font-weight:600}
+    .cta-row{display:flex; gap:.6rem; flex-wrap:wrap; margin:12px 0 0}
+    .btn{
+      display:inline-flex; align-items:center; gap:.45rem;
+      padding:.7rem 1rem; border-radius:12px; font-weight:700;
+      border:1px solid var(--line); background:#fff; color:#fff; /* overridden for non-primary */
+      box-shadow:var(--shadow)
+    }
+    .btn .ti{font-size:1rem}
+    .btn.primary{background:var(--cta); color:#fff; border-color:transparent}
+    .btn:not(.primary){color:var(--brand-ink)}
+
+    /* ======= Header ======= */
+    .hdr{
+      position:sticky; top:0; z-index:40; height:var(--header-h);
+      background:rgba(255,255,255,.85); backdrop-filter:saturate(180%) blur(10px);
+      border-bottom:1px solid var(--line)
+    }
+    .hdr .inner{height:100%; display:flex; align-items:center; justify-content:space-between; gap:1rem}
+    .brand{font-weight:700; letter-spacing:.2px; color:var(--ink)}
+    nav a{display:inline-block; padding:.45rem .7rem; border-radius:10px; color:var(--ink); font-weight:600}
+    nav a:hover{background:#f1f5f9}
+    .skip{position:absolute; left:-9999px}
+    .skip:focus{left:12px; top:12px; background:#fff; padding:.4rem .6rem; border:1px solid var(--line); border-radius:8px}
+
+    /* ======= Hero ======= */
+    .hero{padding:48px 0 18px}
+    .eyebrow{font-size:.9rem; color:var(--muted); letter-spacing:.02em}
+    h1{font-size:clamp(1.9rem, 1.2rem + 2vw, 2.6rem); line-height:1.15; margin:.25rem 0 .5rem}
+    .lead{color:var(--muted); max-width:65ch}
+
+    /* ======= Tab bar ======= */
+    .tabbar{
+      position:sticky; top:calc(var(--header-h) + 4px); z-index:30;
+      background:#fff; border:1px solid var(--line); border-radius:9999px;
+      box-shadow:var(--shadow); padding:10px 16px; margin:16px 0 12px;
+    }
+    .tabbar-list{
+      display:flex; gap:38px; align-items:center; flex-wrap:nowrap;
+      overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none;
+    }
+    .tabbar-list::-webkit-scrollbar{display:none}
+    .tabbar a{
+      padding:8px 0; white-space:nowrap; font-weight:700;
+      color:#475569; letter-spacing:.01em; font-size:clamp(.95rem,.86rem + .25vw,1.05rem);
+    }
+    .tabbar a:hover{color:var(--ink); opacity:1}
+    .tabbar a:focus-visible{outline:2px solid var(--brand); outline-offset:6px; border-radius:8px}
+    @media (max-width:720px){
+      .tabbar{border-radius:18px; padding:8px 12px}
+      .tabbar-list{gap:22px}
+    }
+
+    /* ======= Cards & content ======= */
+    .card{border:1px solid var(--line); background:#fff; border-radius:16px; box-shadow:var(--shadow)}
+    .card .bd{padding:16px 18px}
+    .k{letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700; font-size:.8rem; margin:.25rem 0 .35rem}
+    .list{margin:.25rem 0 .6rem; padding-left:1.05rem}
+    .list li{margin:.18rem 0}
+
+    .cols{display:grid; gap:16px; grid-template-columns:1fr}
+    @media (min-width:900px){ .cols{grid-template-columns:1.1fr .9fr} }
+
+    .figure{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fafafa}
+    .figure img{width:100%; height:auto}
+    .figcap{padding:8px 10px; font-size:.85rem; color:#e2e8f0; border-top:1px solid var(--line); background:#fff}
+
+    /* ======= Appendix helpers ======= */
+    .apx-link{
+      display:inline-flex; align-items:center; gap:.45rem; margin-top:10px;
+      padding:8px 12px; border:1px solid var(--line); border-radius:999px;
+      background:#f8fafc; color:#334155; font-weight:700;
+    }
+    .apx-link .ti{font-size:.9rem}
+    .gallery{display:grid; gap:12px; grid-template-columns:repeat(1,1fr)}
+    @media (min-width:680px){ .gallery{grid-template-columns:repeat(3,1fr)} }
+    .src-list a{word-break:break-word}
+
+    footer{border-top:1px solid var(--line); text-align:center; color:#64748b; padding:16px 0; margin-top:20px}
+
+    /* ======= Click-to-zoom lightbox ======= */
+    .zoomable{ cursor:zoom-in; }
+    .zoomable:focus{ outline:2px solid var(--brand); outline-offset:4px; border-radius:8px; }
+    .lightbox{
+      position:fixed; inset:0; display:none; z-index:1000;
+      background:rgba(15,23,42,.75);
+      align-items:center; justify-content:center; padding:20px;
+    }
+    .lightbox.open{ display:flex; animation:fade-in .15s ease-out; }
+    .lightbox img{
+      max-width:min(1200px,96vw); max-height:92vh;
+      border-radius:12px; box-shadow:var(--shadow); cursor:zoom-out; background:#fff;
+    }
+    .lightbox .close-btn{
+      position:absolute; top:18px; right:18px;
+      background:#fff; border:1px solid var(--line); border-radius:999px;
+      padding:8px 12px; font-weight:700; color:var(--ink);
+    }
+    @keyframes fade-in{ from{opacity:0} to{opacity:1} }
+
+    /* ======= Wide table (horizontal scroll) ======= */
+    .scroll-x{
+      overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch;
+      border:1px solid var(--line); border-radius:12px; background:#fff;
+    }
+    .scroll-x table{ min-width:1040px; }
+    .scroll-x::-webkit-scrollbar{ height:10px }
+    .scroll-x::-webkit-scrollbar-thumb{ background:#cbd5e1; border-radius:9999px }
+    .scroll-x::-webkit-scrollbar-track{ background:#f1f5f9; border-radius:9999px }
+    .tbl{ width:100%; border-collapse:separate; border-spacing:0 }
+    .tbl th, .tbl td{ padding:8px 10px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); vertical-align:top }
+    .tbl th{ background:#eef2ff; text-align:left }
+    .tbl tr:first-child th, .tbl tr:first-child td{ border-top:1px solid var(--line) }
+    .tbl tr td:first-child, .tbl tr th:first-child{ border-left:1px solid var(--line) }
+    .scroll-hint{ font-size:.85rem; color:#64748b; margin:.35rem 2px 0 }
+    @media (min-width:1100px){ .scroll-hint{ display:none } }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip">Skip to content</a>
+
+  <!-- ======= Header ======= -->
+  <header class="hdr" role="navigation" aria-label="Site">
+    <div class="container inner">
+      <a class="brand" href="index.html" aria-label="Back to portfolio">← Back to portfolio</a>
+      <nav>
+ 
+     
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <!-- ======= Hero ======= -->
+    <section class="hero" aria-labelledby="title">
+      <div class="eyebrow">Detailed report</div>
+      <h1 id="title">EngTrackr — UK Engineering Roles Tracker</h1>
+      <p class="lead">Data-first case study: discovery → quant → personas → market & competition → strategy/roadmap → prototype → metrics.</p>
+
+      <!-- Tab bar -->
+      <nav class="tabbar" aria-label="Section navigation">
+        <div class="tabbar-list">
+          <a href="#snapshot">Snapshot</a>
+          <a href="#users">Users &amp; research</a>
+          <a href="#market">Market &amp; competition</a>
+          <a href="#strategy">Product vision, objectives &amp; initiatives</a>
+          <a href="#mvp">MVP &amp; roadmap</a>
+          <a href="#metrics">Metrics &amp; tests</a>
+          <a href="#risks">Risks</a>
+          <a href="#prototype">Prototype</a>
+          <a href="#appendix">Appendix</a>
+        </div>
+      </nav>
+
+      <!-- Quick chips -->
+      <div class="chips" aria-label="Quick facts">
+        <span class="chip">26 interviews</span>
+        <span class="chip">50+ survey</span>
+        <span class="chip">3 personas</span>
+        <span class="chip">TAM/SAM/SOM</span>
+        <span class="chip">HTML demo</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="cta-row">
+        <a class="btn primary" href="EngTrackrV1.html" target="_blank" rel="noopener"><i class="ti-control-play"></i> Open demo</a>
+        <a class="btn" href="EngTrackrB.html"><i class="ti-file"></i> Read product brief</a>
+      </div>
+    </section>
+
+ <!-- ======= Snapshot (condensed) ======= -->
+<article id="snapshot" class="card" aria-labelledby="snap-title">
+  <div class="bd">
+    <div class="k">Snapshot</div>
+    <h2 id="snap-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">What I did & what it proves</h2>
+
+    <!-- Proof chips -->
+    <div class="chips" style="margin:.25rem 0 .4rem">
+      <span class="chip">26 interviews</span>
+      <span class="chip">50+ survey</span>
+      <span class="chip">Clickable HTML demo</span>
+      <span class="chip">OKRs set</span>
+    </div>
+
+    <!-- Summary skills/impact (kept) -->
+    <div class="cols">
+      <div>
+        <div class="k">Skills evidenced</div>
+        <ul class="list">
+          <li><strong>Insight → action:</strong> research → fast, testable UI decisions.</li>
+          <li><strong>Product sense:</strong> simple table + quick filters from patterns.</li>
+          <li><strong>Strategy:</strong> clear North Star &amp; OKRs; Now/Next/Later plan.</li>
+          <li><strong>Execution:</strong> shipped a working HTML demo; set experiment plan.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Hard & Soft skills -->
+    <div class="cols" style="margin-top:.4rem">
+      <!-- Hard skills -->
+      <div>
+        <div class="k">Hard skills</div>
+        <ul class="list">
+          <li><strong>User research &amp; insight synthesis:</strong> interviews + survey → personas &amp; themes.</li>
+          <li><strong>Quant analysis &amp; market sizing:</strong> TAM/SAM/SOM; used survey stats to size pains.</li>
+          <li><strong>Prioritisation &amp; roadmapping:</strong> Now/Next/Later; value–effort trade-offs.</li>
+          <li><strong>Experiment design &amp; metrics:</strong> simple tests and key events to instrument.</li>
+          <li><strong>UX &amp; rapid prototyping:</strong> clickable HTML demo to validate eligibility &amp; timing.</li>
+          <li><strong>Competitive analysis &amp; positioning:</strong> lightweight scan to inform focus.</li>
+          <li><strong>Technical fluency:</strong> web basics; debugged data/links.</li>
+        </ul>
+      </div>
+
+      <!-- Soft skills (plain English) -->
+      <div>
+        <div class="k">Soft skills</div>
+        <ul class="list">
+          <li><strong>Communication with users:</strong> recruited, interviewed, followed up.</li>
+          <li><strong>Critical thinking &amp; problem framing:</strong> questioned assumptions; chose evidence over opinions.</li>
+          <li><strong>Bias to action &amp; ownership:</strong> moved quickly, learned from tests, iterated.</li>
+          <li><strong>Organisation &amp; time management:</strong> kept a steady cadence and deadlines.</li>
+          <li><strong>Openness to feedback &amp; iteration:</strong> adjusted direction based on findings.</li>
+                    <li><strong>User empathy:</strong> designed around deadlines, stress, and trust in links.</li>
+          
+        </ul>
+      </div>
+    </div>
+  </div>
+</article>
+
+
+
+
+    <!-- ======= Users & Research ======= -->
+    <article id="users" class="card" aria-labelledby="users-title" style="margin-top:12px">
+      <div class="bd">
+        <div class="k">Users & research</div>
+        <h2 id="users-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">Recruitment → interviews → survey → personas</h2>
+
+        <div class="cols">
+          <div>
+            <div class="k">Recruitment</div>
+            <ul class="list">
+              <li>Uni societies, course chats, Discord/Reddit; small gift-card raffle.</li>
+              <li>Mix by year (1st → Masters) and sub-discipline (mech, EEE, aero, process…).</li>
+            </ul>
+
+            <div class="k">Interview highlights</div>
+            <ul class="list">
+              <li><strong>Eligibility is unclear:</strong> students open many roles only to find they’re not eligible.</li>
+              <li><strong>Deadlines slip:</strong> no reliable reminders; reopenings often missed.</li>
+              <li><strong>Sub-disciplines are hard to isolate:</strong> filters too broad elsewhere.</li>
+              <li><strong>Trust:</strong> “verified apply link” repeatedly requested.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="k">Survey (50+)</div>
+            <ul class="list">
+              <li>Validated demand for <strong>eligibility at a glance</strong> and <strong>deadline reminders</strong>.</li>
+              <li>Preference for a <strong>simple table UI</strong> + fast filters.</li>
+            </ul>
+
+            <div class="k">Personas (3)</div>
+            <ul class="list">
+              <li><strong>Primary:</strong> “Alex” — deadline pain, wants one-tap “remind me”.</li>
+              <li><strong>Secondary:</strong> “Emily” — discovery/clarity, esp. early years.</li>
+              <li>“Ava” (planner) de-prioritised for V1 due to switching costs.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Deep links to appendix assets -->
+        <div class="cta-row">
+          <a class="apx-link" href="#apx-personas"><i class="ti-user"></i> Persona images (Appendix)</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- ======= Market & Competition ======= -->
+    <article id="market" class="card" aria-labelledby="market-title" style="margin-top:12px">
+      <div class="bd">
+        <div class="k">Market & competition</div>
+        <h2 id="market-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">Sizing & positioning</h2>
+
+        <div class="cols">
+          <!-- Left column -->
+          <div>
+            <div class="k">Top-down market size (concise)</div>
+            <ul class="list">
+              <li><strong>Total market (UK higher education):</strong> ~2,900,000 students (2023/24).</li>
+              <li><strong>TAM (Engineering &amp; Technology):</strong> 179,000 students/year × 4-year cohort ≈ <strong>716,000</strong>.</li>
+              <li><strong>SAM (likely premium users):</strong> 1.7% × 716,000 ≈ <strong>12,200</strong> subscribers.</li>
+              <li><strong>SOM (directional revenue):</strong> 12,200 × £10 ≈ <strong>£122k/year</strong>.</li>
+            </ul>
+
+            <div class="k">Market growth (headline)</div>
+            <ul class="list">
+              <li><strong>Direction:</strong> overall upward trend with a dip in 2023/24.</li>
+              <li><strong>Planning band:</strong> base forecast is flat-to-slightly up; sensitivity = <strong>−2.85%</strong> / <strong>+1.36%</strong>.</li>
+            </ul>
+
+            <div class="k">Assumptions (for transparency)</div>
+            <ul class="list">
+              <li>4-year rolling cohort for TAM; conservative conversion for SAM; early-stage intro pricing for SOM.</li>
+            </ul>
+
+            <div class="k">Positioning</div>
+            <p style="margin:.25rem 0 .6rem">
+              <strong>Different because:</strong> EngTrackr focuses on <em>eligibility clarity</em> and <em>timing</em> (deadlines/reopenings) with <em>verified links</em>—not generic job search.
+            </p>
+          </div><!-- /left column -->
+
+          <!-- Right column -->
+          <div>
+            <div class="figure">
+              <img src="images/CT.jpg" alt="Competitive matrix" class="zoomable" data-full="images/CT.jpg">
+              <div class="figcap">Click to enlarge the competitive matrix.</div>
+            </div>
+          </div><!-- /right column -->
+        </div><!-- /cols -->
+
+        <div class="cta-row">
+          <a class="apx-link" href="#apx-market-sources"><i class="ti-link"></i> Market sources &amp; calculations (Appendix)</a>
+          <a class="apx-link" href="#apx-fan"><i class="ti-stats-up"></i> Growth chart (Appendix)</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- ======= Product vision, objectives & initiatives ======= -->
+    <article id="strategy" class="card" aria-labelledby="strat-title" style="margin-top:12px">
+      <div class="bd">
+        <div class="k">Product vision, objectives & initiatives</div>
+        <h2 id="strat-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">
+          Developing concrete steps to meet the product objective
+        </h2>
+
+        <div class="k">Product vision</div>
+        <p style="margin:.25rem 0 .6rem">
+          Make job hunting effortless for engineering students, so they can build the future.
+        </p>
+
+        <div class="k">Objectives → initiatives (with deadlines)</div>
+        <div class="scroll-x" role="region" aria-label="Objectives mapped to initiatives with deadlines" tabindex="0">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Product objective</th>
+                <th>Initiative (linked to objective)</th>
+                <th>Initiative deadline</th>
+                <th>Objective deadline</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Market:</strong> Become a top-rated UK engineering tracker (reviews ≥4.6/5; presence on 30+ campuses).</td>
+                <td>
+                  <strong>Campus trust & sharing.</strong> Ambassador program in 30+ campuses; one-tap share cards; on-campus demos.
+                  Gentle review prompts after success events; support SLA: close reported issues within <strong>48 hours</strong>.
+                </td>
+                <td>4–12 months (reputation loop)</td>
+                <td>2 years</td>
+              </tr>
+              <tr>
+                <td><strong>Business:</strong> Increase free→paid conversion (5% of total users subscribe).</td>
+                <td>
+                  <strong>Pricing & value.</strong> Pro = unlimited tracked roles & reopen alerts, saved filters, weekly deadline digest.
+                  Transparent pricing, 14-day trial, annual discount. Paywall after a clear value moment (e.g., tracking ≥3 roles).
+                </td>
+                <td>12 months</td>
+                <td>18 months</td>
+              </tr>
+              <tr>
+                <td><strong>Fit:</strong> ≥70% of new users track one <em>eligible</em> role in their first session.</td>
+                <td>
+                  <strong>Role fit in seconds.</strong> Eligibility badges by scheme rules (year, degree, right-to-work); verified apply links;
+                  one-tap Track / Remind; task-timing instrumentation to spot bottlenecks.
+                </td>
+                <td>4 months</td>
+                <td>4 months</td>
+              </tr>
+              <tr>
+                <td><strong>Relevance:</strong> ≥70% of weekly active users track ≥3 roles/week at application peak.</td>
+                <td>
+                  <strong>Always relevant.</strong> Weekly data refresh with freshness SLA; “Fresh this week” sort; reopen signals;
+                  sub-discipline presets and quick filters.
+                </td>
+                <td>4 months</td>
+                <td>4 months</td>
+              </tr>
+              <tr>
+                <td><strong>Organisation:</strong> ≥70% of tracked roles have a next step/reminder within 24h.</td>
+                <td>
+                  <strong>Stay organised by default.</strong> Stage tracker on each role; default next-step & reminders
+                  (deadline/assessment) auto-created; weekly digest; optional calendar export (later).
+                </td>
+                <td>4 months</td>
+                <td>4 months</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="scroll-hint" aria-hidden="true">Swipe sideways to see more →</div>
+
+        <div class="cta-row">
+          <a class="apx-link" href="#apx-strategy"><i class="ti-layers"></i> Full objectives &amp; initiatives tables (Appendix)</a>
+          <a class="apx-link" href="#apx-okrs"><i class="ti-stats-up"></i> Full OKR table (Appendix)</a>
+        </div>
+      </div>
+    </article>
+
+   <!-- ======= Product development (big → small) / MVP & Roadmap ======= -->
+<article id="mvp" class="card" aria-labelledby="mvp-title" style="margin-top:12px">
+  <div class="bd">
+    <div class="k">Roadmap & OKRs</div>
+    <h2 id="mvp-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">Big picture → little picture</h2>
+
+    <!-- Big picture: Roadmap -->
+    <div class="k" style="margin-top:.2rem">Roadmap — Now → Next → Later (big picture)</div>
+    <div class="scroll-x" role="region" aria-label="Roadmap (Now, Next, Later)" tabindex="0">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:22%">Row</th>
+            <th>Now (Sep–Dec ’25)</th>
+            <th>Next (Jan–Jun ’26)</th>
+            <th>Later (Jul–Dec ’26)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>What ships</strong></td>
+            <td>Core site, eligibility badges, verified links, Track/Remind, basic accounts.</td>
+            <td>Share links, invite-friends, campus kit, weekly digest, reviews.</td>
+            <td>Pro tier (student-friendly), billing, coverage/freshness scorecard, partnerships.</td>
+          </tr>
+          <tr>
+            <td><strong>Why</strong></td>
+            <td>Prove value fast; remove eligibility confusion.</td>
+            <td>Make it discoverable & trusted on campus.</td>
+            <td>Sustain the product; establish category leadership.</td>
+          </tr>
+          <tr>
+            <td><strong>Selected measures</strong></td>
+            <td>≥70% new users track 1 eligible role; median decision ≤7s.</td>
+            <td>Reviews ≥4.6/5; presence on 30+ campuses.</td>
+            <td>5% total users subscribe; freshness ≥90% weekly.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="scroll-hint">Swipe → to see more</div>
+
+    <!-- OKRs snapshot under Roadmap (from your spec) -->
+    <div class="k" style="margin-top:12px">OKRs — snapshot (aligned to roadmap)</div>
+    <div class="scroll-x" role="region" aria-label="OKR snapshot aligned to roadmap" tabindex="0">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:32%">Objective (O)</th>
+            <th>Key results (KR)</th>
+            <th style="width:16%">Target window</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>We will launch a Version 1 website that lets students apply end-to-end.</strong></td>
+            <td>
+              KR1: Increase V1 readiness (core site, accounts, apply flow, eligibility, deadlines, feedback) from 0% to 100%.<br>
+              KR2: Increase first-session application-start rate from baseline (set in week 1) to 70%.<br>
+              KR3: Reduce role-view → Apply click time from baseline to ≤60s.
+            </td>
+            <td>Q4 ’25</td>
+          </tr>
+          <tr>
+            <td><strong>We will make fit and timing obvious for students.</strong></td>
+            <td>
+              KR1: Reduce time to decide eligibility from baseline to ≤5s.<br>
+              KR2: Increase “It was clear I was right for this role” (1-tap Yes) from baseline to ≥70%.<br>
+              KR3: Increase roles verified/updated in the last 7 days from 0% to ≥85%.
+            </td>
+            <td>Q4 ’25</td>
+          </tr>
+          <tr>
+            <td><strong>We will ship with trust, speed, and a learning loop.</strong></td>
+            <td>
+              KR1: Improve performance & stability (LCP ≤2.5s and crash-free sessions ≥99.5%) from baseline to target.<br>
+              KR2: Increase reported-issue fixes within 48h from 0% to ≥95%.<br>
+              KR3: Increase analytics coverage for key events (role_view, eligibility_decided, apply_clicked, account_created, feedback_submitted) from 0% to ≥95%.
+            </td>
+            <td>Q4 ’25</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="scroll-hint">Swipe → to see more</div>
+
+    <!-- Medium picture: Development buckets -->
+    <div class="k" style="margin-top:12px">Development buckets (medium picture)</div>
+    <div class="scroll-x" role="region" aria-label="Development buckets" tabindex="0">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:22%">Bucket</th>
+            <th>Big impact (≈60%)</th>
+            <th>Enhancements (≈15%)</th>
+            <th>Support & bugs (≈10%)</th>
+            <th>Platform & stability (≈15%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Examples</strong></td>
+            <td>Roles table, role page, apply flow, eligibility badge, “Due in”, stage/status.</td>
+            <td>Filters & presets, “Due soon” sort, notes, gentle review prompts.</td>
+            <td>Fix broken links/deadlines, auth glitches, content errors; close issues &lt;48h.</td>
+            <td>Perf pass, monitoring/alerts, freshness jobs, accessibility basics.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="scroll-hint">Swipe → to see more</div>
+
+    <!-- Small picture: Value–effort -->
+    <div class="k" style="margin-top:12px">Value–effort matrix (small picture)</div>
+    <div class="figure">
+      <img src="images/VE.jpg" alt="Value–effort matrix of candidate features" class="zoomable" data-full="images/VE.jpg">
+      <div class="figcap">
+        Click to zoom. Legend: Quick wins (high value/low effort), Big bets (high/high), Fill-ins (low/low), Avoid for now (low/high).
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <a class="apx-link" href="#appendix"><i class="ti-stats-up"></i> Full OKRs & notes (Appendix)</a>
+      <a class="apx-link" href="#appendix"><i class="ti-layers"></i> All artifacts (Appendix)</a>
+    </div>
+  </div>
+</article>
+
+<!-- ======= MVP (HTML demo) ======= -->
+<article id="mvp-demo" class="card" aria-labelledby="mvp-demo-title" style="margin-top:12px">
+  <div class="bd">
+    <div class="k">MVP — HTML demo</div>
+    <h2 id="mvp-demo-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">V1 demo: what’s included & how to try it</h2>
+
+    <p class="lead" style="font-size:1rem; margin:.2rem 0 .6rem">
+      This is a minimal viable product (<strong>MVP</strong>) HTML demo to validate <em>fit</em> and <em>timing</em> fast — not a full release.
+    </p>
+
+    <div class="cols">
+      <!-- Left: bullets -->
+      <div>
+        <div class="k">What’s in V1 demo</div>
+        <ul class="list">
+          <li><strong>Roles table</strong> with <em>eligibility at a glance</em> and “<em>Due in</em>”.</li>
+          <li><strong>Verified apply</strong> link (opens the official page).</li>
+          <li><strong>Track / Remind</strong> one-tap actions (creates a reminder state in-demo).</li>
+          <li><strong>Quick filters</strong> (discipline, year, location) + “Fresh this week”.</li>
+          <li><strong>Report issue</strong> flow to flag broken or outdated links.</li>
+          <li><strong>Weekly digest</strong> (mock) to preview relevance timing.</li>
+        </ul>
+
+        <div class="k">Not in this demo</div>
+        <ul class="list">
+          <li>Real auth/billing, calendar sync, notes/pipeline.</li>
+          <li>Live data pipeline — some data is sample for usability testing.</li>
+          <li>Pro features beyond alerts/digest preview (arrive later).</li>
+        </ul>
+      </div>
+
+      <!-- Right: visual -->
+      <div>
+        <div class="figure">
+          <img src="images/ETS.jpg" alt="Screenshot of EngTrackr V1 HTML demo" class="zoomable" data-full="images/ETS.jpg">
+          <div class="figcap">Click to enlarge the demo screenshot.</div>
+        </div>
+      </div>
+    </div>
+
+  
+    <div class="cta-row">
+      <a class="btn primary" href="EngTrackrV1.html" target="_blank" rel="noopener"><i class="ti-control-play"></i> Open HTML demo</a>
+ 
+    </div>
+  </div>
+</article>
+
+
+    <!-- ======= Metrics & Tests ======= -->
+    <article id="metrics" class="card" aria-labelledby="metrics-title" style="margin-top:12px">
+      <div class="bd">
+        <div class="k">Metrics & tests</div>
+        <h2 id="metrics-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">Define success up front</h2>
+
+        <div class="cols">
+          <div>
+            <div class="k">North-star</div>
+            <p class="lead" style="font-size:1rem; margin:.2rem 0 .6rem">“Qualified applications started” (or “Apply clicks” on verified links).</p>
+
+            <div class="k">Supporting metrics</div>
+            <ul class="list">
+              <li><strong>Eligibility decision time:</strong> median ≤ 5–7s (task test, n≥10).</li>
+              <li><strong>Find-an-open-role:</strong> ≥ 80% within 60s (usability test).</li>
+              <li><strong>Apply CTR:</strong> ≥ 30% from role view.</li>
+              <li><strong>Data freshness:</strong> ≥ 90% roles updated within 7 days (weekly audit).</li>
+            </ul>
+          </div>
+          <div>
+            <div class="k">Experiment plan</div>
+            <ul class="list">
+              <li>Instrument demo events (filter use, role view, apply click, reminder set).</li>
+              <li>A/B badge wording for faster fit-decisions.</li>
+              <li>Run 4-week test: send a weekly “Deadline Digest” to 20–30 students; success = fewer missed deadlines + more Apply/Remind than students without.</li>
+            </ul>
+          </div>
+        </div>
+
+              </div>
+    </article>
+
+    <!-- ======= Risks ======= -->
+    <article id="risks" class="card" aria-labelledby="risks-title" style="margin-top:12px">
+      <div class="bd">
+        <div class="k">Risks</div>
+        <h2 id="risks-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">Risks & Mitigations</h2>
+
+        <ul class="list">
+          <li><strong>Finding users / awareness:</strong> start with uni societies & course chats; short YT/TikTok explainers.</li>
+          <li><strong>Competitors:</strong> few UK-specific trackers; win on clarity, speed, and verified data.</li>
+          <li><strong>Scam/bad links:</strong> link verification + visible “Report issue” flow.</li>
+        </ul>
+
+              </div>
+    </article>
+
+
+
+    <!-- ======= Appendix ======= -->
+    <article id="appendix" class="card" aria-labelledby="apx-title" style="margin-top:14px">
+      <div class="bd">
+        <div class="k">Appendix</div>
+        <h2 id="apx-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">Evidence & references</h2>
+
+        <!-- Personas (zoomable) -->
+        <section id="apx-personas" aria-labelledby="apx-personas-title" style="margin-top:8px">
+          <div class="k">Personas</div>
+          <h3 id="apx-personas-title" style="margin:.1rem 0 .5rem; font-size:1.05rem">Persona images (used in discovery & prioritisation)</h3>
+          <p class="lead" style="font-size:.95rem; margin:.15rem 0 .6rem; color:#64748b">
+            Click any image to enlarge on this page.
+          </p>
+
+          <div class="gallery">
+            <figure class="figure">
+              <img src="images/P1.jpg" alt="Persona: Alex — primary persona" class="zoomable" data-full="images/P1.jpg" />
+              <figcaption class="figcap">Alex — primary (click to enlarge).</figcaption>
+            </figure>
+            <figure class="figure">
+              <img src="images/P2.jpg" alt="Persona: Emily — secondary persona" class="zoomable" data-full="images/P2.jpg" />
+              <figcaption class="figcap">Emily — secondary (click to enlarge).</figcaption>
+            </figure>
+            <figure class="figure">
+              <img src="images/P3.jpg" alt="Persona: Ava — planner persona" class="zoomable" data-full="images/P3.jpg" />
+              <figcaption class="figcap">Ava — planner (click to enlarge).</figcaption>
+            </figure>
+          </div>
+
+          <div class="cta-row">
+            <a class="apx-link" href="#users"><i class="ti-arrow-left"></i> Back to Users &amp; research</a>
+          </div>
+        </section>
+
+        <!-- Market sources -->
+        <section id="apx-market-sources" aria-labelledby="apx-src-title" style="margin-top:18px">
+          <div class="k">Market sources</div>
+          <h3 id="apx-src-title" style="margin:.1rem 0 .5rem; font-size:1.05rem">Market sizing & positioning — sources</h3>
+          <ul class="list src-list">
+            <li><a href="#" target="_blank" rel="noopener">HESA — Engineering & Technology student enrolments (UK)</a></li>
+            <li><a href="#" target="_blank" rel="noopener">EngineeringUK report — latest skills & pipeline overview</a></li>
+            <li><a href="#" target="_blank" rel="noopener">ONS — UK population 18–24 (for TAM cross-check)</a></li>
+            <li>Competitor scan notes: <a href="#" target="_blank" rel="noopener">Competitor A</a>, <a href="#" target="_blank" rel="noopener">Competitor B</a>, <a href="#" target="_blank" rel="noopener">Competitor C</a></li>
+          </ul>
+          <div class="cta-row">
+            <a class="apx-link" href="#market"><i class="ti-arrow-left"></i> Back to Market &amp; competition</a>
+          </div>
+        </section>
+
+        <!-- Fan graph -->
+        <section id="apx-fan" aria-labelledby="apx-fan-title" style="margin-top:18px">
+          <div class="k">Fan graph</div>
+          <h3 id="apx-fan-title" style="margin:.1rem 0 .5rem; font-size:1.05rem">Fan graph visual</h3>
+          <figure class="figure" aria-hidden="true">
+            <img src="images/FC.jpg" alt="Fan graph showing enthusiasm across personas">
+          </figure>
+          <div class="cta-row">
+            <a class="apx-link" href="#users"><i class="ti-arrow-left"></i> Back to Users &amp; research</a>
+          </div>
+        </section>
+
+        <!-- Appendix: full strategy tables -->
+        <section id="apx-strategy" aria-labelledby="apx-strategy-title" style="margin-top:18px">
+          <div class="k">Product vision, objectives & initiatives</div>
+          <h3 id="apx-strategy-title" style="margin:.1rem 0 .5rem; font-size:1.05rem">Full tables</h3>
+
+          <!-- Objectives table -->
+          <div class="k">Product objectives</div>
+          <table class="tbl" style="width:100%; border-collapse:collapse; margin:.4rem 0 1rem">
+            <thead>
+              <tr>
+                <th>Objective</th>
+                <th>Deadline</th>
+                <th>Success metric</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Market:</strong> Become a top-rated UK engineering tracker.</td>
+                <td>2 years</td>
+                <td>Reviews ≥4.6/5; active in 30+ campuses.</td>
+              </tr>
+              <tr>
+                <td><strong>Business:</strong> Increase free→paid conversion.</td>
+                <td>18 months</td>
+                <td>5% of total users subscribe.</td>
+              </tr>
+              <tr>
+                <td><strong>Fit:</strong> Students know eligibility instantly and act.</td>
+                <td>4 months</td>
+                <td>≥70% of new users track one eligible role in first session.</td>
+              </tr>
+              <tr>
+                <td><strong>Relevance:</strong> Students discover relevant roles with minimal effort.</td>
+                <td>4 months</td>
+                <td>≥70% of WAUs track ≥3 roles/week at peak.</td>
+              </tr>
+              <tr>
+                <td><strong>Organisation:</strong> Students stay organised without thinking.</td>
+                <td>4 months</td>
+                <td>≥70% of tracked roles have a next step/reminder within 24h.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Initiatives table -->
+          <div class="k">Product initiatives</div>
+          <table class="tbl" style="width:100%; border-collapse:collapse; margin:.4rem 0 0">
+            <thead>
+              <tr>
+                <th>Goal</th>
+                <th>Initiative</th>
+                <th>Deadline</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Market</strong></td>
+                <td>Campus trust & sharing: ambassador program, one-tap share cards, on-campus demos; gentle review prompts after success; support SLA &lt;48h.</td>
+                <td>2 years (reputation loop 4–12 months)</td>
+              </tr>
+              <tr>
+                <td><strong>Business</strong></td>
+                <td>Pricing & value: Pro = saved filters, weekly deadline digest, reopen alerts; 14-day trial; annual discount.</td>
+                <td>12 months</td>
+              </tr>
+              <tr>
+                <td><strong>Fit</strong></td>
+                <td>Role fit in seconds: eligibility badges by scheme rules, verified apply links, one-tap Track/Remind; task timing to spot bottlenecks.</td>
+                <td>4 months</td>
+              </tr>
+              <tr>
+                <td><strong>Relevance</strong></td>
+                <td>Always relevant: weekly data refresh & freshness SLA, “Fresh this week” sort, reopen signals, sub-discipline presets.</td>
+                <td>4 months</td>
+              </tr>
+              <tr>
+                <td><strong>Organisation</strong></td>
+                <td>Stay organised by default: stage tracker on each role, default next-step & reminders, weekly digest, optional calendar export (later).</td>
+                <td>4 months</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="cta-row" style="margin-top:12px">
+            <a class="apx-link" href="#strategy"><i class="ti-arrow-left"></i> Back to Product vision, objectives &amp; initiatives</a>
+          </div>
+        </section>
+
+        
+    </article>
+  </main>
+
+  <footer>© 2025 Joseph Stafford</footer>
+
+  <!-- Image lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+    <button class="close-btn" type="button" aria-label="Close preview">Close ✕</button>
+    <img id="lightbox-img" alt="">
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lightbox-img');
+
+      const open = (src, alt='') => {
+        lbImg.src = src; lbImg.alt = alt;
+        lb.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      };
+      const close = () => {
+        lb.classList.remove('open');
+        lbImg.src = ''; lbImg.alt = '';
+        document.body.style.overflow = '';
+      };
+
+      document.querySelectorAll('img.zoomable').forEach(img => {
+        img.addEventListener('click', () => open(img.dataset.full || img.src, img.alt));
+        img.setAttribute('tabindex','0');
+        img.addEventListener('keydown', (e) => { if (e.key === 'Enter') open(img.dataset.full || img.src, img.alt); });
+      });
+
+      lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+      lb.querySelector('.close-btn').addEventListener('click', close);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    });
+  </script>
+</body>
+</html>
+

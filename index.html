@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Joseph Stafford — Product Management Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Joseph Stafford — Mechanical Engineer pivoting into Product Management. EngTrackr case study, engineering projects, and contact information." />
+
+  <!-- Fonts & icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/themify-icons.css"/>
+
+  <style>
+    /* ======= Design tokens ======= */
+    :root{
+      --ink:#0f172a; --muted:#475569; --bg:#ffffff; --card:#f7f7fb; --line:#e5e7eb;
+      --brand:#6366f1; --brand-ink:#1f2a6b; --cta:#111827;
+      --radius:14px; --shadow:0 4px 18px rgba(15,23,42,.08);
+      --header-h:72px; --content-w:1100px;
+
+      /* Right column + portrait controls */
+      --rail-w:380px;
+      --portrait-h:340px;
+    }
+
+    /* ======= Base ======= */
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink); background:var(--bg); line-height:1.6;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:var(--brand); text-decoration:none}
+    a:hover{opacity:.9}
+    img{max-width:100%; display:block}
+
+    /* ======= Layout helpers ======= */
+    .container{max-width:var(--content-w); margin:0 auto; padding:0 20px}
+    section{scroll-margin-top:calc(var(--header-h) + 20px)}
+    .chips{display:flex; gap:.5rem; flex-wrap:wrap}
+    .chip{background:#eef2ff; color:#3730a3; padding:.35rem .6rem; border-radius:999px; font-size:.8rem; font-weight:600}
+
+    /* Fancy "coming soon" chip */
+    .chip.soon{
+      display:inline-flex; align-items:center; gap:.35rem;
+      background:linear-gradient(135deg,#eef2ff 0%,#e9f1ff 100%);
+      color:#3730a3; border:1px solid rgba(99,102,241,.25);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 3px 10px rgba(99,102,241,.08);
+      font-weight:700; padding:.38rem .7rem;
+    }
+    .chip.soon i{font-size:.95rem; opacity:.9}
+    .chip.soon .dot{
+      width:.5rem; height:.5rem; border-radius:999px; background:#6366f1;
+      box-shadow:0 0 0 0 rgba(99,102,241,.55); display:inline-block;
+      animation:soonPulse 2s ease-out infinite;
+    }
+    @keyframes soonPulse{
+      0%{box-shadow:0 0 0 0 rgba(99,102,241,.55)}
+      70%{box-shadow:0 0 0 .6rem rgba(99,102,241,0)}
+      100%{box-shadow:0 0 0 0 rgba(99,102,241,0)}
+    }
+
+    /* ======= Sticky header ======= */
+    .hdr{position:sticky; top:0; z-index:40; height:var(--header-h);
+      background:rgba(255,255,255,.8); backdrop-filter:saturate(180%) blur(10px);
+      border-bottom:1px solid var(--line)}
+    .hdr .inner{height:100%; display:flex; align-items:center; justify-content:space-between; gap:1rem}
+    .brand{font-weight:700; letter-spacing:.2px; color:var(--ink)}
+    nav a{display:inline-block; padding:.45rem .7rem; border-radius:10px; color:var(--ink); font-weight:600}
+    nav a:hover, nav a[aria-current="page"]{background:#f1f5f9}
+    .social a{margin-left:.5rem; color:#64748b}
+    .skip{position:absolute; left:-9999px}
+    .skip:focus{left:12px; top:12px; background:#fff; padding:.4rem .6rem; border:1px solid var(--line); border-radius:8px}
+
+    /* ======= Hero ======= */
+    .hero{padding:48px 0 28px}
+    @media (min-width:900px){ .hero{padding:64px 0 32px} }
+
+    .eyebrow{font-size:.9rem; color:var(--muted)}
+    h1{font-size:clamp(1.9rem, 1.1rem + 2.3vw, 2.6rem); line-height:1.12; margin:.35rem 0 .6rem}
+
+    .hero .grid{display:grid; gap:24px; grid-template-columns:1fr}
+    @media (min-width:900px){
+      .hero .grid{grid-template-columns: 1fr var(--rail-w); align-items:start}
+    }
+
+    .lead{color:var(--muted); font-size:1.05rem; max-width:60ch}
+    .cta-row{display:flex; gap:.75rem; flex-wrap:wrap; margin:18px 0 6px}
+    .btn{display:inline-flex; align-items:center; gap:.45rem; padding:.7rem 1rem; border-radius:12px; font-weight:700; border:1px solid var(--line); background:#fff; color:var(--brand-ink); box-shadow:var(--shadow)}
+    .btn.primary{background:var(--cta); color:#fff; border-color:transparent}
+    .btn .ti{font-size:1rem}
+
+    /* ======= Featured project ======= */
+    .featured{margin-top:18px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
+    .featured .inner{padding:18px; display:grid; gap:18px; grid-template-columns:1fr}
+    @media (min-width:900px){ .featured .inner{grid-template-columns:1.2fr .8fr; align-items:center} }
+    .featured h2{margin:0 0 .25rem}
+    .meta{font-size:.9rem; color:var(--muted); margin-bottom:.35rem}
+    .bullets{margin:.35rem 0 .8rem; padding-left:1.15rem}
+    .bullets li{margin:.3rem 0}
+    .feat-visual{
+      aspect-ratio: 4 / 3; border-radius:12px;
+      background:radial-gradient(120% 120% at 0% 0%, #eef2ff 0, #fff 60%), linear-gradient(135deg, #e0e7ff, #fafafa);
+      border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:#3730a3; font-weight:700;
+    }
+    .feat-visual.is-logo{
+      background:
+        center/70% no-repeat var(--logo),
+        radial-gradient(120% 120% at 0% 0%, #eef2ff 0, #fff 60%),
+        linear-gradient(135deg, #e0e7ff, #fafafa);
+    }
+
+    /* ======= Right column: photo + glance ======= */
+    .aside-col{display:flex; flex-direction:column; gap:16px}
+    .portrait-card{align-self:flex-end; width:var(--rail-w); margin-top:28px; background:#fff; border:1px solid var(--line); border-radius:20px; padding:0; overflow:hidden; box-shadow:var(--shadow)}
+    .portrait{width:100%; height:var(--portrait-h); object-fit:cover; display:block}
+    .aside-col > .card{ width:var(--rail-w); align-self:flex-end }
+    @media (max-width: 899px){
+      .portrait-card{align-self:center; width:100%; margin-top:18px}
+      .portrait{height:300px}
+      .aside-col > .card{width:100%; align-self:stretch}
+    }
+
+    /* ======= Work grid ======= */
+    #work{padding:64px 0 30px}
+    .grid-cards{display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .card{border:1px solid var(--line); border-radius:16px; background:#fff; box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column}
+
+    .card .thumb{
+      height:160px;
+      background:linear-gradient(135deg,#f3f4f6,#e5e7eb);
+      position:relative; overflow:hidden; border-bottom:1px solid var(--line);
+    }
+    .card .thumb img{
+      position:absolute; inset:0; width:100%; height:100%;
+      object-fit:cover; display:block;
+    }
+    .card .thumb.contain img{ object-fit:contain; background:#fff; }
+
+    .card h3{font-size:1.05rem; margin:.85rem .9rem 0}
+    .card p{color:var(--muted); margin:.35rem .9rem .8rem; font-size:.95rem}
+    .card .actions{display:flex; gap:.5rem; padding:.9rem}
+    .card .btn{flex:1; justify-content:center}
+
+    /* ======= About & Contact ======= */
+    #about, #contact{padding:54px 0}
+    .kicker{letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700; font-size:.8rem}
+    .cols{display:grid; gap:18px; grid-template-columns:1fr}
+    @media (min-width:900px){ .cols{grid-template-columns:1.2fr .8fr} }
+
+    /* Pull the contact section up into the unused whitespace under the About grid */
+    #contact{ margin-top:-48px; padding-top:48px }
+    @media (max-width:899px){ #contact{ margin-top:0; padding-top:54px } }
+
+    footer{border-top:1px solid var(--line); padding:16px 0; text-align:center; color:#64748b}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip">Skip to content</a>
+
+  <!-- ======= Header ======= -->
+  <header class="hdr">
+    <div class="container inner">
+      <a class="brand" href="#top" aria-label="Go to top">Joseph Stafford</a>
+      <nav aria-label="Primary">
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="social" aria-label="Social links">
+        <a href="https://www.linkedin.com/in/joseph-stafford-177218276" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="ti-linkedin"></i></a>
+        <a href="mailto:josephkstafford@gmail.com" aria-label="Email"><i class="ti-email"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <!-- ======= Hero ======= -->
+    <section class="hero" id="top" aria-labelledby="intro-title">
+      <div class="eyebrow">Mechanical Engineer → Product Manager</div>
+      <h1 id="intro-title">From problem to product, driven to delight users in hard-to-copy, margin-enhancing ways</h1>
+
+      <div class="grid">
+        <!-- LEFT -->
+        <div>
+          <p class="lead">
+            I’ll graduate in June 2026 and want to join a digital product team as the voice of the user, partnering with design and engineering to ship great features.
+          </p>
+
+          <div class="chips" aria-label="Proof quick facts">
+            <span class="chip">26 interviews</span>
+            <span class="chip">50+ survey</span>
+            <span class="chip">3 personas</span>
+            <span class="chip">HTML demo</span>
+          </div>
+
+          <div class="cta-row" role="group" aria-label="Primary actions">
+            <a class="btn primary" href="EngTrackrV1.html"><i class="ti-arrow-right"></i> Open EngTrackr</a>
+            <a class="btn" href="#work"><i class="ti-layout-grid2"></i> View PM Work</a>
+          </div>
+
+          <article class="featured" aria-labelledby="feat-title">
+            <div class="inner">
+              <div>
+                <div class="kicker">Featured project</div>
+                <h2 id="feat-title">EngTrackr — UK Engineering Roles Tracker</h2>
+                <p class="meta">My role: Founder &amp; Product Manager · 2025</p>
+                <ul class="bullets">
+                  <li><strong>Problem:</strong> No UK engineering roles tracker for simple role discovery and application tracking.</li>
+                  <li><strong>Built with users:</strong> 26 interviews, 50-person survey; tested on a clickable demo.</li>
+                  <li><strong>Outcomes:</strong> Eligibility in 5 seconds; countdowns + one-tap reminders reduce misses.</li>
+                </ul>
+                <div class="cta-row">
+                  <a class="btn primary" href="EngTrackrB.html"><i class="ti-file"></i> Read Product Brief</a>
+                </div>
+              </div>
+              <div aria-hidden="true">
+                <div class="feat-visual is-logo" style="--logo:url('images/ET.JPG')"></div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- RIGHT -->
+        <aside class="aside-col">
+          <div class="portrait-card">
+            <img src="images/joseph.jpg" alt="Portrait of Joseph Stafford" class="portrait" loading="lazy">
+          </div>
+
+          <div class="card" style="padding:16px">
+            <h3 style="margin:.25rem 0 .4rem">At a glance</h3>
+            <p style="color:var(--muted); margin:0 0 .6rem">
+              Hi, I’m Joseph, a Mechanical Engineering student at Lancaster. I’ve strengthened clear communication, structured problem-solving, and data-led thinking. Over the winter break, I’ll be a <strong>Project Management intern</strong>, assisting with planning and organising a project, coordinating stakeholders to help deliver on time and budget.
+            </p>
+            <div class="chips">
+              <span class="chip">BEng Mechanical</span>
+              <span class="chip">Graduating 2026</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ======= Work ======= -->
+    <section id="work" aria-labelledby="work-title">
+      <h2 id="work-title" style="margin:0 0 14px">Work</h2>
+      <div class="grid-cards">
+        <!-- EngTrackr card -->
+        <article class="card">
+          <div class="thumb" role="img" aria-label="EngTrackr interface preview">
+            <img src="images/ET1.jpg" alt="EngTrackr interface preview">
+          </div>
+          <h3>EngTrackr — UK Engineering Roles Tracker</h3>
+          <p>See what’s open to you now—and never miss a reopening</p>
+          <div class="actions">
+            <a class="btn primary" href="EngTrackrB.html">Product brief</a>
+            <a class="btn" href="EngTrackrD.html">Detailed report</a>
+          </div>
+        </article>
+
+        <!-- HaloSight -->
+        <article class="card" aria-labelledby="halo-title">
+          <div class="thumb" role="img" aria-label="HaloSight visor display concept">
+            <img src="images/HSL.jpg" alt="HaloSight visor display on firefighter helmet">
+          </div>
+          <h3 id="halo-title">HaloSight — Firefighter Visor Display</h3>
+
+          <!-- Status badge -->
+          <div class="chips" aria-label="Status">
+            
+          </div>
+
+          <p>See your crew through smoke, talk hands-free, and trigger a one-press Mayday when seconds matter.</p>
+
+          <div class="actions">
+            <a class="btn primary" href="HaloSightB.html">Product brief</a>
+           <a class="btn" href="EngTra.html">Coming soon</a>
+
+            </a>
+          </div>
+        </article>
+
+        <!-- SteadyPaste -->
+        <article class="card">
+          <div class="thumb" role="img" aria-label="Prototype visual">
+            <img src="images/T.jpg" alt="Paper prototype and quick HTML demo">
+          </div>
+          <h3>SteadyPaste — Accessible Toothpaste Dispenser</h3>
+          <p>One-press, mess-free toothpaste for people with limited grip strength — consistent dose, no squeezing.</p>
+          <div class="actions">
+            <a class="btn primary" href="SteadyPaste.html">Product brief</a>
+      <a class="btn" href="EngTra.html">Coming soon</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ======= About ======= -->
+    <section id="about" aria-labelledby="about-title">
+      <div class="cols">
+        <div>
+          <div class="kicker">About</div>
+          <h2 id="about-title" style="margin:.35rem 0 .4rem">From Mechanical Engineering to Product</h2>
+          <p style="color:var(--muted); max-width:65ch">
+            My Mechanical Engineering degree trained me to take open-ended problems and make them workable: define clear requirements and success criteria, prototype to learn, measure what matters, and communicate decisions with a team. Those habits transfer directly to Product Management—structured thinking, evidence before opinion, and comfort working with constraints.
+          </p>
+        </div>
+        <div class="card" style="padding:16px">
+          <h3 style="margin:.25rem 0 .4rem">What I bring</h3>
+          <ul style="margin:.3rem 0 .2rem 1.1rem">
+            <li><strong>Customer curiosity:</strong> talk to users, shadow flows, and read support threads to understand real problems.</li>
+            <li><strong>Self-directed learning &amp; prototyping:</strong> teach myself tools (Figma/HTML/CSS), make quick demos, invite feedback early.</li>
+            <li><strong>Structured thinking &amp; writing:</strong> frame problems, define outcomes/constraints, capture assumptions &amp; risks in a 1-pager.</li>
+            <li><strong>Prioritisation &amp; trade-offs:</strong> use impact-vs-effort to pick the next smallest thing worth testing.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======= Contact ======= -->
+    <section id="contact" aria-labelledby="contact-title">
+      <div class="kicker">Contact</div>
+      <h2 id="contact-title" style="margin:.35rem 0 .4rem">Say hi</h2>
+      <p class="lead" style="max-width:60ch">
+        Best way to reach me: <a href="mailto:josephkstafford@gmail.com">josephkstafford@gmail.com</a>,
+        or connect on <a href="https://www.linkedin.com/in/joseph-stafford-177218276" target="_blank" rel="noopener">LinkedIn</a>.
+      </p>
+    </section>
+  </main>
+
+  <footer>© 2025 Joseph Stafford</footer>
+</body>
+</html>
+

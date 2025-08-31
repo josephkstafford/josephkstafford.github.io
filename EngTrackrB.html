@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>EngTrackr — Product Brief</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="EngTrackr: see what's open to you now—and never miss a reopening. Product brief, outcomes, scope, metrics, and links." />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/themify-icons.css"/>
+  <style>
+    :root{ --ink:#0f172a; --muted:#475569; --bg:#ffffff; --card:#f7f7fb; --line:#e5e7eb;
+           --brand:#6366f1; --cta:#111827; --radius:14px; --shadow:0 4px 18px rgba(15,23,42,.08);
+           --header-h:68px; --content-w:1000px;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+    a{color:var(--brand);text-decoration:none} a:hover{opacity:.9}
+    .container{max-width:var(--content-w);margin:0 auto;padding:0 20px}
+    header{position:sticky;top:0;z-index:10;height:var(--header-h);background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid var(--line)}
+    header .inner{height:100%;display:flex;align-items:center;justify-content:space-between}
+    .brand{font-weight:700;color:var(--ink)}
+    .btn{display:inline-flex;align-items:center;gap:.45rem;padding:.65rem .9rem;border-radius:12px;font-weight:700;border:1px solid var(--line);background:#fff;color:#1f2a6b;box-shadow:var(--shadow)}
+    .btn.primary{background:var(--cta);color:#fff;border-color:transparent}
+    .cta-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:10px}
+    .chips{display:flex;gap:.5rem;flex-wrap:wrap}
+    .chip{background:#eef2ff;color:#3730a3;padding:.35rem .6rem;border-radius:999px;font-size:.8rem;font-weight:600}
+    .hero{padding:28px 0 18px}
+    .eyebrow{font-size:.9rem;color:var(--muted)}
+    h1{font-size:clamp(1.8rem,1.2rem + 2vw,2.4rem);line-height:1.18;margin:.25rem 0 .4rem}
+    .lead{color:var(--muted);margin:0 0 .6rem}
+    .card{border:1px solid var(--line);background:#fff;border-radius:16px;box-shadow:var(--shadow)}
+    .card .bd{padding:16px 18px}
+    .k{letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;font-size:.8rem;margin:.25rem 0 .35rem}
+    .list{margin:.25rem 0 .6rem;padding-left:1.05rem}
+    .list li{margin:.18rem 0}
+    .cols{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+    @media (max-width:700px){ .cols{grid-template-columns:1fr} }
+    footer{border-top:1px solid var(--line);text-align:center;color:#64748b;padding:14px 0;margin-top:16px}
+
+    /* Bigger gap between stacked cards */
+    .card + .card{ margin-top:18px; }
+    @media (min-width:700px){ .card + .card{ margin-top:24px; } }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container inner">
+    <a class="brand" href="index.html">← Back to portfolio</a>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <div class="eyebrow">PRODUCT BRIEF</div>
+    <h1>EngTrackr — UK Engineering Roles Tracker</h1>
+    <p class="lead">See what’s open to you now—and never miss a reopening.</p>
+    <div class="chips" aria-label="Discovery quick facts">
+      <span class="chip">26 interviews</span>
+      <span class="chip">50–person survey</span>
+      <span class="chip">3 personas</span>
+      <span class="chip">Clickable HTML demo</span>
+    </div>
+    <div class="cta-row">
+      <a class="btn primary" href="EngTrackrV1.html" target="_blank" rel="noopener">
+        <i class="ti-control-play"></i> Open demo
+      </a>
+      <a class="btn" href="EngTrackrD.html"><i class="ti-file"></i> Detailed report</a>
+    </div>
+  </section>
+
+  <!-- Snapshot: What I did (concise, proof-first) -->
+  <article class="card" aria-labelledby="et-snap-title">
+    <div class="bd">
+      <div class="k">Snapshot</div>
+      <h2 id="et-snap-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">What I did</h2>
+
+      <!-- Proof chips -->
+      <div class="chips" style="margin:.25rem 0 .4rem">
+        <span class="chip">26 interviews</span>
+        <span class="chip">50+ survey</span>
+        <span class="chip">3 personas</span>
+        <span class="chip">Clickable HTML demo</span>
+  <span class="chip">Roadmap developed</span>
+        <span class="chip">OKRs set</span>
+<span class="chip">User testing</span>
+      </div>
+
+      <ul class="list">
+  <li>Mapped user pain points &amp; motivations from interviews and surveys; grouped users into 3 detailed personas.</li>
+  <li>Conducted research on market size, pricing, and competitors.</li>
+  <li>Defined product strategy (roadmap, OKRs, value/effort metrics) to set priorities and keep focus.</li>
+  <li>Built and iterated prototypes; kept the project on track against milestones.</li>
+  <li>Built an HTML sample and defined success metrics; planning user tests.</li>
+</ul>
+
+    </div>
+  </article>
+
+  <article class="card" aria-label="At a glance">
+    <div class="bd">
+      <div class="k">Who &amp; Problem</div>
+      <ul class="list">
+        <li><strong>Audience:</strong> UK engineering students seeking internships/grad roles.</li>
+        <li><strong>Pain:</strong> Listings are scattered; <strong>eligibility is unclear</strong> and <strong>deadlines are easy to miss</strong>.</li>
+      </ul>
+
+      <div class="k">What it does (outcomes &gt; features)</div>
+      <ul class="list">
+        <li><strong>5-second eligibility</strong> with clear badges &amp; filters.</li>
+        <li><strong>Never miss deadlines</strong> via due-in countdowns &amp; one-tap reminders.</li>
+        <li><strong>Weekly digest</strong> to spot new/reopening roles.</li>
+      </ul>
+
+      <div class="cols">
+        <div>
+          <div class="k">MVP scope (Version 1)</div>
+          <p style="margin:.25rem 0 .6rem">
+            Simple table UI; eligibility badges/toggle; deadlines with “days left”;
+            accurate apply links; verified listings.
+          </p>
+
+          <div class="k">Out of scope (Phase 1)</div>
+          <p style="margin:.25rem 0 .6rem">
+            Calendar sync, notes on a role, manual tracking (applied + stage), sign-in/sign-up,
+            motivation/streaks, hide closed roles, share role link.
+          </p>
+        </div>
+
+        <div>
+          <div class="k">Goals &amp; how we’ll measure</div>
+          <ul class="list">
+            <li><strong>Eligibility decision time ≤ 7s</strong> — timed task on the clickable demo (median across ≥10 target students).</li>
+            <li><strong>Find-an-open-role ≥ 80% within 60s</strong> — usability test completion rate.</li>
+            <li><strong>Apply click-through ≥ 30%</strong> — event tracking from role view to “Apply”.</li>
+            <li><strong>Data freshness ≥ 90%</strong> — roles updated within 7 days (weekly audit).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="k">Press Release &amp; Frequently Asked Questions (PR/FAQ)</div>
+      <ul class="list">
+        <li><strong>What’s new vs job boards?</strong> We optimise <em>eligibility + deadlines</em> first, with consistent sub-discipline tags and verified apply links.</li>
+        <li><strong>Why UK engineering first?</strong> This doesn’t exist in the UK; I’m UK-based so interviews/pilots are easy; single-country focus keeps data clean.</li>
+        <li><strong>Biggest risk &amp; mitigation?</strong> Finding users: word of mouth at uni, YouTube/TikTok clips. Competitors: few direct, focus on simple fast verified data and deadline reminders. Scam links: link verification, report button.</li>
+      </ul>
+    </div>
+  </article>
+
+  <footer>© 2025 Joseph Stafford</footer>
+</main>
+</body>
+</html>
+

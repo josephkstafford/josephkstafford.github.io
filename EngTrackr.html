@@ -1,0 +1,718 @@
+<!--
+  EngTrackr — Case Study (standalone HTML snippet)
+  Paste inside your site. All styles are scoped to .engtrackr so they won’t collide.
+  Replace all placeholder image src/href values marked with TODO.
+-->
+<section id="engtrackr-case-study" class="engtrackr" aria-labelledby="engtrackr-title">
+  <style>
+    /* ========= Design tokens ========= */
+    .engtrackr{
+      --bg:#f6f7fb;          /* page background */
+      --card:#ffffff;        /* surface */
+      --ink:#0f172a;         /* main text */
+      --muted:#475569;       /* secondary text */
+      --brand:#6366f1;       /* primary accent */
+      --accent:#16a34a;      /* positive */
+      --line:#e5e7eb;        /* borders */
+      --warn-bg:#fef3c7;     /* warning bg */
+      --warn-border:#fde68a; /* warning border */
+      --warn-ink:#92400e;    /* warning text */
+      --shadow:0 8px 24px rgba(2,6,23,.06);
+      --radius:14px;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      padding:2rem 1rem;
+      border-radius:1.25rem;
+      line-height:1.5;
+    }
+
+    /* ========= Base ========= */
+    .engtrackr a{color:var(--brand);text-decoration:none}
+    .engtrackr a:hover,.engtrackr a:focus{ text-decoration:underline }
+    .engtrackr :focus-visible{ outline:3px solid var(--brand); outline-offset:2px }
+    .engtrackr .wrap{ max-width:1080px; margin:0 auto }
+    .engtrackr h1{ font-size:clamp(1.8rem, 2.5vw, 2.5rem); line-height:1.15; margin:.5rem 0 0 }
+    .engtrackr h2{ font-size:1.25rem; margin:0 0 .5rem }
+    .engtrackr p{ margin:.5rem 0; color:var(--ink) }
+    .engtrackr .muted{ color:var(--muted) }
+
+    /* Badges & chips */
+    .engtrackr .eyebrow{ display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; font-size:.9rem; color:var(--muted) }
+    .engtrackr .badge{ display:inline-flex; align-items:center; gap:.4rem; padding:.3rem .65rem; border:1px solid var(--line); border-radius:999px; background:#fff; box-shadow:var(--shadow) }
+    .engtrackr .badge.warn{ border-color:var(--warn-border); background:var(--warn-bg); color:var(--warn-ink) }
+    .engtrackr .pill{ display:inline-flex; gap:.4rem; align-items:center; padding:.2rem .55rem; border-radius:999px; background:#f1f5f9; border:1px solid var(--line); font-size:.8rem; color:var(--muted) }
+
+    /* Buttons */
+    .engtrackr .actions{ display:flex; flex-wrap:wrap; gap:.6rem; margin:1rem 0 1.25rem }
+    .engtrackr .btn{ display:inline-flex; align-items:center; gap:.5rem; padding:.7rem 1rem; border-radius:.8rem; border:1px solid var(--line); background:#fff; box-shadow:var(--shadow); font-weight:600; color:var(--ink) }
+    .engtrackr .btn.primary{ background:var(--brand); border-color:transparent; color:#fff }
+    .engtrackr .btn:active{ transform:translateY(1px) }
+
+    /* Top bar */
+    .engtrackr .topnav{ display:flex; align-items:center; justify-content:space-between; margin-bottom:.75rem }
+    .engtrackr .backlink{ display:inline-flex; gap:.5rem; align-items:center; padding:.5rem .75rem; border:1px solid var(--line); border-radius:.6rem; background:#fff; box-shadow:var(--shadow); color:var(--ink) }
+
+    /* KPI row */
+    .engtrackr .kpis{ display:flex; flex-wrap:wrap; gap:.75rem 1rem; color:var(--muted); font-size:.95rem; margin:.25rem 0 1.25rem }
+    .engtrackr .kpis span{ display:inline-flex; align-items:center; gap:.35rem }
+
+    /* TOC */
+    .engtrackr .toc{ display:flex; flex-wrap:wrap; gap:.5rem; margin:0 0 1rem }
+    .engtrackr .toc a{ padding:.4rem .7rem; border:1px solid var(--line); border-radius:999px; background:#fff; color:var(--muted); box-shadow:var(--shadow) }
+    .engtrackr .toc a[aria-current="true"]{ color:var(--ink); border-color:#cbd5e1 }
+
+    /* Card blocks */
+    .engtrackr section.block{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:1.25rem; margin:0 0 1rem; box-shadow:var(--shadow) }
+    .engtrackr ul{ margin:.25rem 0 .75rem 1rem }
+    .engtrackr li{ margin:.3rem 0 }
+    .engtrackr details{ border:1px dashed var(--line); border-radius:.75rem; padding:.75rem; margin-top:.5rem; background:#fafafa }
+    .engtrackr details>summary{ cursor:pointer; font-weight:600 }
+
+    /* Gallery (thumbs that open the lightbox) */
+    .engtrackr .gallery{ display:grid; grid-template-columns:1fr; gap:12px; margin:0 0 1.25rem }
+    @media (min-width:720px){ .engtrackr .gallery{ grid-template-columns:repeat(4,1fr) } }
+    .engtrackr .thumb{ position:relative; background:var(--card); border:1px solid var(--line); border-radius:1rem; overflow:hidden; cursor:pointer; box-shadow:var(--shadow) }
+    .engtrackr .thumb img{ display:block; width:100%; height:180px; object-fit:cover }
+    .engtrackr .thumb .overlay{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(255,255,255,0),rgba(0,0,0,.3)); display:flex; align-items:flex-end }
+    .engtrackr .thumb .label{ width:100%; padding:.6rem .75rem; color:#fff; font-size:.9rem }
+
+    /* Prototype shots */
+    .engtrackr .shots{ display:grid; grid-template-columns:1fr; gap:10px }
+    @media (min-width:720px){ .engtrackr .shots{ grid-template-columns:repeat(3,1fr) } }
+    .engtrackr figure{ margin:0 }
+    .engtrackr figure img{ width:100%; border-radius:.75rem; border:1px solid var(--line); background:#fff }
+    .engtrackr figcaption{ font-size:.85rem; color:var(--muted); margin-top:.35rem }
+
+    /* Footer links */
+    .engtrackr .more{ display:flex; flex-wrap:wrap; gap:.8rem; margin-top:.75rem }
+
+    /* Lightbox (accessible <dialog>) */
+    .engtrackr dialog{ border:none; border-radius:.9rem; max-width:min(90vw,1100px); padding:0; background:#fff; color:var(--ink); box-shadow:0 25px 60px rgba(2,6,23,.25) }
+    .engtrackr dialog::backdrop{ background:rgba(0,0,0,.55) }
+    .engtrackr .lb{ display:grid; grid-template-rows:auto 1fr auto }
+    .engtrackr .lb header,.engtrackr .lb footer{ display:flex; justify-content:space-between; align-items:center; padding:.75rem 1rem; border-bottom:1px solid var(--line) }
+    .engtrackr .lb footer{ border-bottom:none; border-top:1px solid var(--line) }
+    .engtrackr .lb header h3{ font-size:1rem; margin:0 }
+    .engtrackr .lb .imgwrap{ padding:1rem }
+    .engtrackr .lb img{ width:100%; max-height:70vh; object-fit:contain; border-radius:.6rem; background:#fff }
+    .engtrackr .iconbtn{ background:#fff; border:1px solid var(--line); padding:.45rem .6rem; border-radius:.6rem; color:var(--ink); cursor:pointer; box-shadow:var(--shadow) }
+    .engtrackr .sr-only{ position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden }
+
+    /* Print (nice for PDFs) */
+    @media print{
+      .engtrackr{ background:#fff; padding:0; border-radius:0 }
+      .engtrackr .topnav, .engtrackr .actions, .engtrackr dialog{ display:none !important }
+      .engtrackr section.block{ break-inside:avoid }
+    }
+  </style>
+
+  <div class="wrap">
+    <!-- Breadcrumb / back -->
+    <nav class="topnav" aria-label="Breadcrumb">
+      <a class="backlink" href="/projects" aria-label="Back to all work">← Back to Portfolio</a>
+    </nav>
+
+    <!-- Hero -->
+    <div class="eyebrow" aria-label="Meta">
+      <span class="badge warn" title="Work in progress">In progress</span>
+      <span class="badge" aria-label="Role">Role: Founder/PM</span>
+      <span class="badge" aria-label="Year">2025</span>
+    </div>
+    <h1 id="engtrackr-title">EngTrackr — UK Engineering Roles Tracker</h1>
+    <p class="sub muted">See what’s open for me now, and never miss a reopening.</p>
+    <div class="actions">
+      <a class="btn primary" href="EngTrackrV1.html" targetS="_blank" rel="noreferrer noopener" aria-label="Open HTML demo in a new tab">View HTML demo</a>
+      <a class="btn" href="#appendix" aria-label="Jump to research appendix">Research appendix</a>
+    </div>
+    <div class="kpis" aria-label="Evidence bar">
+      <span>26 interviews</span>
+      <span>50+ survey</span>
+      <span>3 personas</span>
+      <span>HTML demo</span>
+    </div>
+
+   <!-- On this page (TOC) — UPDATED with all sections -->
+<nav class="toc" aria-label="On this page">
+  <a href="#vision-statement-h">1. Vision statement</a>
+  <a href="#vision-h">2. Product vision</a>
+  <a href="#method-h">3. How I found interviewees</a>
+  <a href="#survey-h">4. Survey highlights</a>
+  <a href="#personas-h">5. Personas</a>
+  <a href="#market-h">6. Market size & pricing</a>
+  <a href="#growth-h">7. Market growth</a>
+  <a href="#comp-h">8. Competitor analysis</a>
+  <a href="#comp-table-img-h">9. Competitive table</a>
+  <a href="#objectives-h">10. Project objectives</a>
+  <a href="#initiatives-h">11. Product initiatives</a>
+  <a href="#roadmap-h">12. Product roadmap</a>
+  <a href="#okrs-h">13. OKRs</a>
+  <a href="#dev-buckets-h">14. Development buckets</a>
+  <a href="#ve-h">15. Value–effort matrix</a>
+  <a href="#proto-h">16. Prototype walkthrough</a>
+  <a href="#measure-h">17. Measures & test plan</a>
+ <a href="#appendix-h">18. Research appendix</a>
+</nav>
+
+
+    
+    <!-- Sections -->
+    <section class="block" aria-labelledby="vision-statement-h">
+      <h2 id="vision-statement-h">Vision statement</h2>
+      <p>Make job hunting effortless for engineering students, so they can build the future. 
+</p>
+    </section>
+
+    <section class="block" aria-labelledby="vision-h">
+      <h2 id="vision-h">Product vision</h2>
+      <p>EngTrackr exists to make the internship and graduate job-finding process a stress-free experience for engineering students. It replaces deadline chaos with timely clarity so students spend less time on admin and more on what matters. As well as turning uncertainty into simple, well-timed action. It supports those who struggle with motivation or procrastination and gives early-year students instant confidence about eligibility. Our aim is a fair, achievable path from classroom to first role.</p>
+          </section>
+
+<section class="block" aria-labelledby="method-h">
+  <h2 id="method-h">How I found interviewees <span class="pill" aria-hidden="true">Step 2</span></h2>
+
+  <p class="muted">Recruited UK engineering students across <strong>all years</strong>.</p>
+  <ul>
+    <li><strong>Channels:</strong> University societies <strong>8</strong>, Engineering group chats <strong>12</strong>, Discord/Reddit <strong>6</strong></li>
+    <li><strong>Interviews completed:</strong> <strong>26</strong></li>
+  </ul>
+
+  <p class="muted" style="margin-top:.5rem">
+    I ran <strong>open-ended interviews</strong> with a <strong>non-biased, empathetic</strong> approach—listening first, using neutral prompts, and avoiding leading questions
+    (<a href="#appendix">more in the appendix</a>).
+  </p>
+
+</section>
+
+
+
+    <section class="block" aria-labelledby="survey-h">
+      <h2 id="survey-h">Survey highlights</h2>
+      <p class="muted">
+    I gathered <strong>50+ survey responses</strong> from my engineering degree cohort and university engineering societies.
+  </p>
+  <ul>
+    <li><strong>58%</strong> nearly missed at least one deadline</li>
+    <li><strong>64%</strong> wanted eligibility at a glance (year, visa)</li>
+    <li>Top requests: reminders and a simple table tracker (easy-to-scan listings)</li>
+  </ul>
+      <div class="more">
+        <a class="btn" href="I.pdf" target="_blank" rel="noreferrer noopener" aria-label="Open survey questions PDF in a new tab">View survey questions (PDF)</a>
+      </div>
+    </section>
+
+   
+ <!-- Personas (3 in a single horizontal row) -->
+<section class="block" aria-labelledby="personas-h">
+  <h2 id="personas-h">Personas</h2>
+  <p class="muted">Using interview and survey insights, I grouped users into the following three personas.</p>
+
+  <div class="persona-row" style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px;">
+    <img src="images/P1.JPG" alt="Persona: Deadline Sprinter"
+         style="border-radius:.75rem; border:1px solid var(--line); width:100%; display:block;">
+    <img src="images/P2.JPG" alt="Persona: Planner"
+         style="border-radius:.75rem; border:1px solid var(--line); width:100%; display:block;">
+    <img src="images/P3.JPG" alt="Persona: Explorer"
+         style="border-radius:.75rem; border:1px solid var(--line); width:100%; display:block;">
+  </div>
+</section>
+
+  
+<!-- Market size & pricing (drop-in snippet) -->
+<section class="block" aria-labelledby="market-h">
+  <h2 id="market-h">Market size & pricing</h2>
+  <p class="muted">
+    Using a <strong>top-down approach</strong>, I sized the market and set a simple entry price:
+  </p>
+  <ul>
+    <li><strong>Total UK student base:</strong> ~2.9M in higher education</li>
+    <li><strong>TAM (Engineering & Technology):</strong> ~716k students (~1s79k/year × 4 cohorts)</li>
+    <li><strong>SAM (paid):</strong> conservative 1.7% conversion ≈ 12.2k premium users</li>
+    <li><strong>Pricing & revenue:</strong> £10/year entry tier → ~£122k annual revenue (12.2k × £10)</li>
+  </ul>
+  <p class="muted">Full sources and calculation notes are in the research appendix.</p>
+</section>
+
+<!-- Market growth (fan chart) -->
+<section class="block" aria-labelledby="growth-h">
+  <h2 id="growth-h">Market growth</h2>
+  <p class="muted">
+    Fan chart showing <strong>real enrolment data to 2023/24</strong> and <strong>projection bands thereafter</strong>.
+  </p>
+
+  <figure>
+    <!-- TODO: replace src with your image path -->
+    <img src="images/FC.jpg"
+         alt="Fan chart of UK Engineering & Technology student enrolments: actuals to 2023/24, projections from 2024/25 onward"
+         style="width:100%;display:block;border:1px solid var(--line);border-radius:.75rem;background:#fff;">
+    <figcaption class="muted" style="margin-top:.35rem">
+      UK Engineering &amp; Technology student enrolments — historical actuals through 2023/24; projection bands beyond.
+    </figcaption>
+  </figure>
+</section>
+
+<!-- Competitive table (full-width image, not clickable) -->
+<section class="block" aria-labelledby="comp-table-img-h">
+  <h2 id="comp-table-img-h">Competitive table</h2>
+  <figure style="margin-top:.5rem">
+    <img
+      src="images/CT.jpg"
+      alt="Competitive table summarising market share and growth proxies"
+      style="width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:.75rem;background:#fff;"
+      loading="lazy"
+    >
+    <figcaption class="muted" style="margin-top:.35rem">
+      Estimated using Similarweb (Jul&nbsp;2025): market share from <strong>Total Visits</strong>;
+      growth from <strong>Last Month Change</strong>. Traffic figures are seasonal proxies—directional only,
+      not users or revenue.
+    </figcaption>
+  </figure>
+</section>
+
+
+<!-- Project objectives (full-width image) -->
+<section class="block" aria-labelledby="objectives-h">
+  <h2 id="objectives-h">Project objectives</h2>
+  <figure style="margin-top:.5rem">
+    <img
+      src="images/PO.jpg"  <!-- replace with your file, e.g. images/PO.png -->
+
+  </figure>
+</section>
+
+<!-- Product initiatives (full-width image) -->
+<section class="block" aria-labelledby="initiatives-h">
+  <h2 id="initiatives-h">Product initiatives</h2>
+  <figure style="margin-top:.5rem">
+    <img
+      src="images/PI.jpg"  <!-- replace with your file, e.g.images/PI.jpg-->
+  </figure>
+</section>
+
+<!-- Product roadmap (image + short description) -->
+<section class="block" aria-labelledby="roadmap-h">
+  <h2 id="roadmap-h">Product roadmap</h2>
+
+  <figure style="margin-top:.5rem">
+    <img
+      src="images/RM.jpg"  <!-- replace with your file, e.g. images/RM.jpg -->
+        </figure>
+</section>
+
+<!-- OKRs (Objectives & Key Results) -->
+<section class="block" aria-labelledby="okrs-h">
+  <h2 id="okrs-h">OKRs</h2>
+  <p class="muted">Three objectives with measurable key results.</p>
+
+  <style>
+    .engtrackr .okr-grid{
+      display:grid; gap:12px;
+      grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
+    }
+    .engtrackr .okr-card{
+      background:#fff;border:1px solid var(--line);border-radius:.75rem;box-shadow:var(--shadow);
+      padding:.9rem; display:flex; flex-direction:column; gap:.5rem;
+    }
+    .engtrackr .okr-card h3{ margin:.1rem 0; font-size:1.06rem; }
+    .engtrackr .okr-card ul{ margin:.25rem 0 .25rem 1rem; }
+    .engtrackr .okr-card li{ margin:.25rem 0; }
+    .engtrackr code{ background:#f1f5f9; padding:.05rem .3rem; border-radius:.3rem; }
+  </style>
+
+  <div class="okr-grid">
+    <!-- Objective 1 -->
+    <article class="okr-card">
+      <h3>O1 — Launch V1 that lets students apply end-to-end</h3>
+      <ul>
+        <li>Increase <strong>V1 readiness</strong> (core site, accounts, apply flow, eligibility, deadlines, feedback) from <strong>0%</strong> → <strong>100%</strong>.</li>
+        <li>Increase <strong>first-session application-start rate</strong> from baseline → <strong>70%</strong>.</li>
+        <li>Reduce <strong>role-view → Apply click time</strong> from baseline → <strong>≤60s</strong>.</li>
+      </ul>
+    </article>
+
+    <!-- Objective 2 -->
+    <article class="okr-card">
+      <h3>O2 — Make fit and timing obvious</h3>
+      <ul>
+        <li>Reduce <strong>time to decide eligibility</strong> from baseline → <strong>≤5s</strong>.</li>
+        <li>Increase “<strong>It was clear I was right for this role</strong>” (1-tap Yes) from baseline → <strong>≥70%</strong>.</li>
+        <li>Increase <strong>roles verified/updated in last 7 days</strong> from <strong>0%</strong> → <strong>≥99%</strong>.</li>
+      </ul>
+    </article>
+
+    <!-- Objective 3 -->
+    <article class="okr-card">
+      <h3>O3 — Ship with trust, speed, and a learning loop</h3>
+      <ul>
+        <li>Improve <strong>performance & stability</strong> to <strong>LCP ≤2.5s</strong> and <strong>crash-free sessions ≥99.5%</strong> (from baseline).</li>
+        <li>Increase <strong>reported-issue fixes within 72h</strong> from <strong>0%</strong> → <strong>≥95%</strong>.</li>
+        <li>Increase analytics coverage for key events (<code>role_view</code>, <code>eligibility_decided</code>, <code>apply_clicked</code>, <code>account_created</code>, <code>feedback_submitted</code>) from <strong>0%</strong> → <strong>≥95%</strong>.</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- Development buckets (horizontally scrollable, roomy columns) -->
+<section class="block" aria-labelledby="dev-buckets-h">
+  <h2 id="dev-buckets-h">These are development buckets</h2>
+
+  <style>
+    .engtrackr .matrix-wrap{
+      overflow-x:auto; overflow-y:hidden; margin-top:.5rem;
+      -webkit-overflow-scrolling:touch; border-radius:.75rem;
+    }
+    .engtrackr .matrix-table{
+      border-collapse:separate; border-spacing:0; background:#fff; box-shadow:var(--shadow);
+      border:1px solid var(--line);
+      /* Make the table wider than the viewport so you can slide it */
+      min-width: 1960px;
+      table-layout:auto; font-size:.95rem;
+    }
+    .engtrackr .matrix-table col.stubs { width:260px; }
+    .engtrackr .matrix-table col.wide  { width:420px; } /* each content column */
+    .engtrackr .matrix-table th, .engtrackr .matrix-table td{
+      padding:.75rem .9rem; border-bottom:1px solid var(--line); vertical-align:top;
+    }
+    .engtrackr .matrix-table thead th{
+      background:#eef2ff; text-align:left; font-weight:700;
+      position:sticky; top:0; z-index:3; /* header sticks while scrolling horizontally */
+    }
+    /* Sticky first column for readability while sliding */
+    .engtrackr .matrix-table thead th:first-child,
+    .engtrackr .matrix-table tbody th{
+      position:sticky; left:0; z-index:4; background:#f1f5f9;
+      border-right:1px solid var(--line);
+      white-space:nowrap; width:260px;
+    }
+    .engtrackr .matrix-table tbody tr:last-child td,
+    .engtrackr .matrix-table tbody tr:last-child th{ border-bottom:none; }
+    .engtrackr .matrix-table ul{ margin:.25rem 0 0 1rem; }
+    .engtrackr .matrix-table li{ margin:.2rem 0; }
+    .engtrackr .matrix-hint{ color:var(--muted); font-size:.9rem; margin-top:.4rem; }
+  </style>
+
+  <div class="matrix-wrap" role="region" aria-label="Scrollable development buckets table">
+    <table class="matrix-table" aria-describedby="dev-buckets-h">
+      <colgroup>
+        <col class="stubs">
+        <col class="wide"><col class="wide"><col class="wide"><col class="wide">
+      </colgroup>
+      <thead>
+        <tr>
+          <th scope="col">Development categories &raquo;</th>
+          <th scope="col">Big impact items</th>
+          <th scope="col">Near-term enhancement requests</th>
+          <th scope="col">Support &amp; bug fixes</th>
+          <th scope="col">Platform, technical debt &amp; stability</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Percentage of development time</th>
+          <td><strong>60%</strong></td>
+          <td><strong>15%</strong></td>
+          <td><strong>10%</strong></td>
+          <td><strong>15%</strong></td>
+        </tr>
+        <tr>
+          <th scope="row">Items</th>
+          <td>
+            <ul>
+              <li><strong>Tabular roles list</strong> (Company • Role • Location • Due in • Eligibility • Status)</li>
+              <li><strong>Role page</strong> (summary + Apply)</li>
+              <li><strong>Apply flow</strong> (start fast; <em>Mark as applied</em>)</li>
+              <li><strong>Eligibility badge</strong> (Yes / Maybe / Not)</li>
+              <li><strong>Deadlines visible</strong> (date + “Due in”)</li>
+              <li><strong>Stage / status</strong> (Applied / Interview / Offer)</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li><strong>Filters</strong> (degree year, discipline, location)</li>
+              <li><strong>Sort</strong> by “Due soon”</li>
+              <li><strong>Notes</strong> on a role</li>
+              <li><strong>Feedback button</strong> (report issue / suggest)</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Fix broken <strong>Apply</strong> links</li>
+              <li>Fix <strong>deadline/time-zone</strong> errors</li>
+              <li>Fix <strong>sign-up/sign-in</strong> issues</li>
+              <li>Correct role data/typos</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li><strong>Speed pass</strong> (faster load)</li>
+              <li><strong>Error &amp; crash monitoring</strong></li>
+              <li><strong>Daily freshness job</strong> + alerting</li>
+              <li><strong>Accessibility basics</strong> (contrast, keyboard, labels)</li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="matrix-hint">Tip: drag sideways to see all buckets →</p>
+</section>
+
+
+<!-- Value–effort matrix (full-width image) -->
+<section class="block" aria-labelledby="ve-h">
+  <h2 id="ve-h">Value–effort matrix</h2>
+  <figure style="margin-top:.5rem">
+    <img
+      src="images/VM.jpg"  <!-- replace with your file, e.g. images/VM.jpg -->
+     
+    <figcaption class="muted" style="margin-top:.35rem">
+      Higher value is up; lower effort is to the right. P1 items (blue) are high-value and feasible for v1; P2 (orange) next; P3 (green) later.
+    </figcaption>
+  </figure>
+</section>
+
+
+
+<!-- Prototype walkthrough (match other cards) -->
+<section class="block" aria-labelledby="proto-h">
+  <div class="proto-head">
+    <h2 id="proto-h">Prototype walkthrough</h2>
+    <a class="btn" href="EngTrackrV1.html" target="_blank" rel="noreferrer noopener">
+      Open HTML demo →
+    </a>
+  </div>
+
+  <style>
+    /* Header matches default section styling */
+    .engtrackr .proto-head{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:.75rem;margin-bottom:.5rem;
+    }
+    .engtrackr .proto-head h2{ margin:0; } /* use your global h2 size */
+
+    /* Feature cards behave like other grids and don't over-stretch */
+    .engtrackr .proto-grid{
+      display:grid;
+      gap:12px;
+      grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+    }
+    .engtrackr .proto-card{
+      background:#fff;border:1px solid var(--line);border-radius:.75rem;box-shadow:var(--shadow);
+      padding:.9rem;display:flex;flex-direction:column;gap:.45rem;
+    }
+    .engtrackr .proto-card h3{ font-size:1.06rem; margin:.2rem 0; }
+    .engtrackr .proto-card p{ margin:0 }
+  </style>
+
+  <div class="proto-grid">
+    <article class="proto-card">
+      <h3>Filters for quick eligibility</h3>
+      <p class="muted">Check fit in seconds with <strong>Programme</strong>, <strong>Year</strong>, and <strong>Discipline</strong> filters—no long reads.</p>
+    </article>
+
+    <article class="proto-card">
+      <h3>Reminder link (add to calendar)</h3>
+      <p class="muted">Click <strong>Remind</strong> to download an <strong>.ics</strong> file with the closing date—drop it straight into your calendar.</p>
+    </article>
+
+    <article class="proto-card">
+      <h3>Weekly digest (3 groups)</h3>
+      <p class="muted">Monday summary covering <em>Newly open</em>, <em>Closing this week</em>, and <em>Opens next week</em>. One email, clear plan.</p>
+    </article>
+
+    
+</section>
+
+
+
+
+<section class="block" aria-labelledby="measure-h">
+  <h2 id="measure-h">Measures & test plan</h2>
+  <p class="muted">
+    Plan: run baseline usability tests with <strong>6–8 users</strong> on the current prototype, and iterate on any feedback given.
+  </p>
+</section>
+
+
+       <!-- Appendix (updated) -->
+<section class="block" id="appendix" aria-labelledby="appendix-h">
+  <h2 id="appendix-h">Research appendix (optional deep dive)</h2>
+  
+ <!-- How I got interviews (in depth) -->
+<details open>
+  <summary>How I got interviews (in depth)</summary>
+  <p class="muted" style="margin:.4rem 0 .4rem">
+    To speak with a diverse set of UK engineering students across <strong>all years</strong> (June–Aug 2025),
+    I used several channels:
+  </p>
+
+  <h4 style="margin:.4rem 0">Engineering societies — <strong>8 participants</strong></h4>
+  <ul>
+    <li><strong>What:</strong> Reached out to society presidents/VPs to promote the study.</li>
+    <li><strong>How:</strong> Asked for posts via Instagram and email lists inviting a short Zoom call about finding internships/grad roles, with a chance to win a £15 gift card. Students emailed within 2 weeks with course, year, and availability (9–5 slots over one week).</li>
+    <li><strong>Why:</strong> Societies include students from every year, giving broad perspectives.</li>
+  </ul>
+
+  <h4 style="margin:.6rem 0 .2rem">Engineering group chats (Instagram, WhatsApp) — <strong>12 participants</strong></h4>
+  <ul>
+    <li><strong>What:</strong> Posted a call for volunteers in my cohort’s engineering group chats.</li>
+    <li><strong>How:</strong> Short conversation on application tracking with a £15 gift-card draw; same details as the societies outreach.</li>
+    <li><strong>Why:</strong> Familiar peers provide more candid detail; mix of internship and grad-role seekers.</li>
+  </ul>
+
+  <h4 style="margin:.6rem 0 .2rem">Discord &amp; Reddit — <strong>6 participants</strong></h4>
+  <ul>
+    <li><strong>What:</strong> Joined UK engineering/student-career servers and subreddits.</li>
+    <li><strong>How:</strong> Posted in relevant channels and messaged mods to share the invite; offered a £15 gift-card draw; same info as societies outreach.</li>
+    <li><strong>Why:</strong> Added breadth beyond my university—participants from multiple UK institutions.</li>
+  </ul>
+
+  <p class="muted" style="margin-top:.6rem">
+    <strong>Overall interviews completed:</strong> <strong>26</strong> .
+  </p>
+</details>
+
+
+ <!-- Interview questions -->
+<details open>
+  <summary>Interview questions (open-ended)</summary>
+  <p class="muted">The four open-ended questions I asked all participants (with follow-ups as needed):</p>
+  <ol>
+    <li><strong>Current process:</strong> “Can you walk me through how you currently find and track internships or graduate roles?”</li>
+    <li><strong>What works well:</strong> “Which parts of your process work well for you? Could you share a recent example?”</li>
+    <li><strong>Pain points:</strong> “Where did it last break down or become frustrating during this process? What happened?”</li>
+    <li><strong>Wish list:</strong> “If you could change one thing about how you find or track roles, what would you change—and why?”</li>
+  </ol>
+</details>
+
+
+  <!-- Persona selection (primary, secondary) -->
+<details>
+  <summary>Persona selection (primary & secondary)</summary>
+  <p class="muted">Named personas and why they’re prioritised for v1.</p>
+  <ul>
+    <li>
+      <strong>Primary — Alex</strong> (urgent doer)<br>
+      <span class="muted">
+        Largest addressable segment with the highest urgency. Clear gap in the market for a strong
+        <em>reminder / calendar</em> flow — many trackers don’t make “set reminder” effortless.
+      </span>
+    </li>
+    <li style="margin-top:.5rem">
+      <strong>Secondary — Emily</strong> (Explorer)<br>
+      <span class="muted">
+        Big discovery/clarity struggle and a market gap; typically strongest in <em>1st–2nd year</em>, so the pool is smaller than Alex.
+       
+      </span>
+    </li>
+    <li style="margin-top:.5rem">
+      <strong>Secondary — Ava</strong> (Planner)<br>
+      <span class="muted">
+        More established workflows and higher switching costs; often already using something that “works well enough.”
+       
+      </span>
+    </li>
+  </ul>
+</details>
+
+
+  <!-- Market research sources -->
+  <details>
+    <summary>Market size & growth — sources</summary>
+    <ul>
+      <li><a href="https://www.hesa.ac.uk/news/20-03-2025/sb271-higher-education-student-statistics/numbers" target="_blank" rel="noreferrer noopener">HESA: UK HE total students (2.9M)</a></li>
+      <li><a href="https://www.hesa.ac.uk/data-and-analysis/students/table-49" target="_blank" rel="noreferrer noopener">HESA Table 49: Engineering &amp; Technology enrolments (~179k/year)</a></li>
+      <li><a href="https://www.hesa.ac.uk/data-and-analysis/students/table-46" target="_blank" rel="noreferrer noopener">HESA Table 46: historical &amp; projected enrolments (fan chart)</a></li>
+      <li><a href="https://clevertap.com/blog/increase-app-conversion-rate/" target="_blank" rel="noreferrer noopener">Subscription benchmark: ~1.7% paid conversion</a></li>
+      <li><a href="https://the-trackr.com/premium/#pricing" target="_blank" rel="noreferrer noopener">Competitor pricing: Trackr Premium</a></li>
+    </ul>
+  </details>
+
+  <!-- Competitive landscape — overview image (place this before the closing </section>) -->
+<details open>
+  <summary>Competitive landscape — overview</summary>
+  <figure style="margin-top:.5rem">
+    <button class="thumb"
+            data-lb-src="images/CL.JPG"  <!-- TODO: replace with your image -->
+        
+      <img src="images/CL.JPG"
+           alt="Competitive landscape overview: market share and growth snapshot"
+           style="width:100%;display:block;border:1px solid var(--line);border-radius:.75rem;background:#fff;">
+    </button>
+    </figure>
+</details>
+
+
+
+  <!-- Accessible lightbox (dialog) -->
+  <dialog id="engtrackr-lightbox" aria-label="Image viewer">
+    <div class="lb">
+      <header>
+        <h3 id="lb-title" aria-live="polite">&nbsp;</h3>
+        <button class="iconbtn" data-close><span class="sr-only">Close</span>✕</button>
+      </header>
+      <div class="imgwrap">
+        <img id="lb-img" src="" alt="Expanded artifact">
+      </div>
+      <footer>
+        <p id="lb-caption" class="muted" style="margin:0"></p>
+        <button class="iconbtn" data-close>Close</button>
+      </footer>
+    </div>
+  </dialog>
+
+  <script>
+    // ===== Lightbox & helpers =====
+    (function(){
+      const dlg = document.getElementById('engtrackr-lightbox');
+      const img = document.getElementById('lb-img');
+      const title = document.getElementById('lb-title');
+      const cap = document.getElementById('lb-caption');
+      const thumbs = document.querySelectorAll('#engtrackr-case-study .thumb');
+      const closeButtons = dlg.querySelectorAll('[data-close]');
+      let lastTrigger = null;
+
+      thumbs.forEach(btn => btn.addEventListener('click', () => {
+        lastTrigger = btn;
+        const src = btn.getAttribute('data-lb-src');
+        const t = btn.getAttribute('data-lb-title') || '';
+        const c = btn.getAttribute('data-lb-caption') || '';
+        img.src = src; title.textContent = t; cap.textContent = c;
+        dlg.showModal();
+      }));
+
+      function close(){ dlg.close(); img.src=''; if(lastTrigger) lastTrigger.focus(); }
+      closeButtons.forEach(b=> b.addEventListener('click', close));
+      dlg.addEventListener('click', (e)=>{ if(e.target === dlg) close(); });
+      window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && dlg.open) close(); });
+    })();
+
+    // ===== TOC active section highlight =====
+    (function(){
+      const toc = document.querySelector('#engtrackr-case-study .toc');
+      if(!toc) return;
+      const links = [...toc.querySelectorAll('a[href^="#"]')];
+
+      // Smooth center scroll
+      links.forEach(a => a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = a.getAttribute('href');
+        const el = document.querySelector(id);
+        if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); }
+      }));
+
+      // Active state via IntersectionObserver
+      const map = new Map(links.map(a => [a.getAttribute('href'), a]));
+      const obs = new IntersectionObserver((entries)=>{
+        entries.forEach(({isIntersecting, target}) => {
+          const href = '#' + target.id;
+          const link = map.get(href);
+          if(link){ link.setAttribute('aria-current', isIntersecting ? 'true' : 'false'); }
+        });
+      }, {rootMargin:'-40% 0px -50% 0px', threshold:0});
+      document.querySelectorAll('#engtrackr-case-study [id$="-h"]').forEach(sec => obs.observe(sec));
+    })();
+  </script>
+</section>
+

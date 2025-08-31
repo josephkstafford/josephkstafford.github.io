@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SteadyPaste — Product Brief</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="SteadyPaste: one-press, mess-free toothpaste for people with limited grip strength—consistent dose, no squeezing. Product brief, outcomes, scope, metrics, and links." />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/themify-icons.css"/>
+  <style>
+    :root{ --ink:#0f172a; --muted:#475569; --bg:#ffffff; --card:#f7f7fb; --line:#e5e7eb;
+           --brand:#6366f1; --cta:#111827; --radius:14px; --shadow:0 4px 18px rgba(15,23,42,.08);
+           --header-h:68px; --content-w:1000px;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+    a{color:var(--brand);text-decoration:none} a:hover{opacity:.9}
+    .container{max-width:var(--content-w);margin:0 auto;padding:0 20px}
+    header{position:sticky;top:0;z-index:10;height:var(--header-h);background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid var(--line)}
+    header .inner{height:100%;display:flex;align-items:center;justify-content:space-between}
+    .brand{font-weight:700;color:var(--ink)}
+    .btn{display:inline-flex;align-items:center;gap:.45rem;padding:.65rem .9rem;border-radius:12px;font-weight:700;border:1px solid var(--line);background:#fff;color:#1f2a6b;box-shadow:var(--shadow)}
+    .btn.primary{background:var(--cta);color:#fff;border-color:transparent}
+    .cta-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:10px}
+    .chips{display:flex;gap:.5rem;flex-wrap:wrap}
+    .chip{background:#eef2ff;color:#3730a3;padding:.35rem .6rem;border-radius:999px;font-size:.8rem;font-weight:600}
+    .hero{padding:28px 0 18px}
+    .eyebrow{font-size:.9rem;color:var(--muted)}
+    h1{font-size:clamp(1.8rem,1.2rem + 2vw,2.4rem);line-height:1.18;margin:.25rem 0 .4rem}
+    .lead{color:var(--muted);margin:0 0 .6rem}
+    .card{border:1px solid var(--line);background:#fff;border-radius:16px;box-shadow:var(--shadow)}
+    .card .bd{padding:16px 18px}
+    .k{letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;font-size:.8rem;margin:.25rem 0 .35rem}
+    .list{margin:.25rem 0 .6rem;padding-left:1.05rem}
+    .list li{margin:.18rem 0}
+    .cols{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+    @media (max-width:700px){ .cols{grid-template-columns:1fr} }
+    footer{border-top:1px solid var(--line);text-align:center;color:#64748b;padding:14px 0;margin-top:16px}
+  </style>
+</head>
+<body>
+<header>
+  <div class="container inner">
+    <a class="brand" href="index.html">← Back to portfolio</a>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <div class="eyebrow">PRODUCT BRIEF</div>
+    <h1>SteadyPaste — Accessible Toothpaste Dispenser</h1>
+    <p class="lead">One-press, mess-free toothpaste for people with limited grip strength — consistent dose, no squeezing.</p>
+    <div class="chips" aria-label="Quick facts">
+      <span class="chip">One-press actuation</span>
+      <span class="chip">Consistent dose</span>
+      <span class="chip">Refillable cartridge</span>
+      <span class="chip">Easy-clean nozzle</span>
+    </div>
+  </section>
+
+  <article class="card" aria-label="At a glance">
+    <div class="bd">
+      <div class="k">Who &amp; Problem</div>
+      <ul class="list">
+        <li><strong>Audience:</strong> Adults with limited grip strength or hand tremors (e.g., arthritis, Parkinson’s) who want to brush independently.</li>
+        <li><strong>Pain:</strong> Squeezing a tube is hard and messy; the amount changes each time, and people can end up needing help for a basic daily task.</li>
+      </ul>
+
+      <div class="k">What it does (outcomes &gt; features)</div>
+      <ul class="list">
+        <li><strong>Gets the same amount every time</strong> with a single, easy press—no fine motor control needed.</li>
+        <li><strong>Cuts the mess</strong> with an anti-drip, easy-clean nozzle and cap.</li>
+        <li><strong>Stays put</strong> with a non-slip base or wall-mount bracket so the press is stable.</li>
+      </ul>
+
+      <div class="cols">
+        <div>
+          <div class="k">MVP scope (Version 1)</div>
+          <p style="margin:.25rem 0 .6rem">
+            Air-pump module drives a <em>plunger inside a refillable cartridge</em> to dispense a set amount; large press surface; one-way valve; dose-limiter; non-slip base or wall mount; easy-clean cap/nozzle.
+          </p>
+
+          <div class="k">Out of scope (Phase 1)</div>
+          <p style="margin:.25rem 0 .6rem">
+            Motorised dispensing or sensors; phone/app features; variable dosing; compatibility with every retail tube (V1 uses our refillable cartridge for consistency).
+          </p>
+        </div>
+
+        <div>
+          <div class="k">Goals &amp; how we’ll measure</div>
+          <ul class="list">
+            <li><strong>High consistency:</strong> at least <u>9 out of 10 presses</u> give the target amount, within ±10% of a “pea-sized” ~0.25&nbsp;g dose.</li>
+            <li><strong>Light push to use:</strong> works with a press force of ≤15&nbsp;N <span style="color:#64748b">(about the weight of a 1.5&nbsp;kg object)</span>.</li>
+            <li><strong>Quick dispense:</strong> delivers the dose in ≤1.5&nbsp;s.</li>
+            <li><strong>Easy on first try:</strong> ≥80% of target users can use it correctly with no instructions.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="k">Press Release &amp; Frequently Asked Questions (PR/FAQ)</div>
+      <ul class="list">
+        <li><strong>What’s new vs. a squeeze tube?</strong> A one-press mechanism moves a plunger to give a predictable dose without squeezing.</li>
+        <li><strong>Biggest risks &amp; mitigations?</strong> Inconsistent dose (dose-limiter + check valve, set stroke length); nozzle clogging (cap + anti-drip geometry tests); pump durability (reinforced mounts + life-cycle testing).</li>
+        <li><strong>What’s next?</strong> Looks-like/works-a-bit prototype to measure dose consistency and required force, then 5-user home trials to check independence and cleanliness.</li>
+      </ul>
+    </div>
+  </article>
+
+  <footer>© 2025 Joseph Stafford</footer>
+</main>
+</body>
+</html>

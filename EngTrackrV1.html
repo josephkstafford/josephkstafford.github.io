@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EngTrackr — Backbone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{ --bg:#f8fafc; --surface:#ffffff; --ink:#0f172a; --muted:#475569; --line:#e5e7eb; --brand:#2563eb; --warn:#b91c1c; --ok:#0e7490; --thead:#f3f6fb; --shadow:0 8px 24px rgba(2,6,23,.06); --radius:14px; }
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Helvetica Neue',Arial,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:1200px;margin:0 auto;padding:24px}
+    header{position:sticky;top:0;background:var(--bg);z-index:50;border-bottom:1px solid var(--line)}
+    .nav{display:flex;align-items:center;gap:16px;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+    .logo{width:24px;height:24px;border-radius:6px;background:var(--brand);box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
+
+    /* toolbar */
+    .toolbar{display:grid;grid-template-columns:1fr auto auto auto auto;gap:10px;align-items:center;margin:16px 0}
+    .search{padding:12px;border:1px solid var(--line);border-radius:10px;width:100%}
+    .select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+
+    /* segmented tabs */
+    .tabs{display:inline-flex;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px}
+    .tab{border:none;background:transparent;padding:8px 12px;border-radius:999px;font-weight:600;color:var(--muted);cursor:pointer}
+    .tab[aria-pressed="true"]{background:var(--brand);color:#fff}
+    .tab .count{opacity:.8;font-weight:700;margin-left:6px}
+
+    /* ring */
+    .win{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:#fff}
+    .ring{--size:24px;position:relative;width:var(--size);height:var(--size);display:grid;place-items:center}
+    .ring svg{transform:rotate(-90deg)} .ring .num{position:absolute;font-weight:800;font-size:10px;color:var(--muted)}
+
+    .tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:auto}
+    table{width:100%;border-collapse:separate;border-spacing:0}
+    thead{background:var(--thead)}
+    th,td{padding:12px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}
+    th{font-weight:700;color:#111827;cursor:pointer}
+    tbody tr:nth-child(even){background:#fcfdff} tbody tr:hover{background:#f8fafc}
+    .col-actions{text-align:right;white-space:nowrap;position:relative}
+
+    .title{display:flex;gap:4px;flex-direction:column}
+    .pos{font-weight:700}
+    .meta{color:var(--muted);font-size:13px}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;color:#0f172a;padding:10px 14px;border-radius:10px;cursor:pointer}
+    .btn.primary{background:var(--brand);color:#fff;border-color:transparent}
+
+    .days{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
+    .d-ok{background:#ecfeff;color:var(--ok)} .d-soon{background:#fffbeb;color:#92400e} .d-urgent{background:#b91c1c;color:#fff}
+    .link{background:transparent;border:none;color:var(--brand);cursor:pointer;margin-left:8px;font-size:12px;font-weight:600;text-decoration:underline}
+
+    /* status chip + menu */
+    .chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;border:1px solid var(--line);cursor:pointer;background:#fff}
+    .chip.applied{background:#e0e7ff;color:#1e3a8a;border-color:transparent}
+    .chip.interviewing{background:#f3e8ff;color:#5b21b6;border-color:transparent}
+    .chip.offer{background:#dcfce7;color:#14532d;border-color:transparent}
+    .chip.rejected{background:#f1f5f9;color:#475569}
+    .menu{position:absolute;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:6px;display:none;z-index:20}
+    .menu button{display:block;width:100%;text-align:left;border:none;background:transparent;padding:8px 10px;border-radius:8px;cursor:pointer}
+    .menu button:hover{background:#f8fafc}
+
+    /* more actions (ellipsis) */
+    .more{position:relative;display:inline-block;margin-left:8px}
+    .more-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer}
+    .more-menu{position:absolute;right:0;top:44px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:6px;display:none;z-index:30;min-width:170px}
+    .more-menu button{display:block;width:100%;text-align:left;border:none;background:transparent;padding:8px 10px;border-radius:8px;cursor:pointer}
+    .more-menu button:hover{background:#f8fafc}
+
+    /* report modal */
+    .modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:1000}
+    .modal.show{display:flex}
+    .modal-card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);width:min(560px,92vw);padding:16px}
+    .modal-card h3{margin:0 0 8px 0}
+    .form-row{margin:8px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .form-row textarea{width:100%;min-height:80px;padding:10px;border:1px solid var(--line);border-radius:10px}
+    .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+
+    /* small */
+    @media (max-width: 760px){
+      .toolbar{grid-template-columns:1fr 1fr;grid-auto-rows:min-content}
+      .toolbar .select{min-width:100%}
+      .toolbar .win{grid-column:1/-1}
+      .tabs{display:flex;flex-wrap:wrap}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav" role="navigation" aria-label="Primary">
+      <div class="brand"><div class="logo" aria-hidden="true"></div><div>EngTrackr</div></div>
+      <!-- Replaced old top links with a focused segmented control -->
+      <div class="tabs" role="tablist" aria-label="Views">
+        <button id="tab-all" class="tab" role="tab" aria-selected="true" aria-pressed="true" data-view="all">All roles <span class="count" id="count-all"></span></button>
+        <button id="tab-due" class="tab" role="tab" aria-selected="false" aria-pressed="false" data-view="due">Due soon <span class="count" id="count-due"></span></button>
+        <button id="tab-saved" class="tab" role="tab" aria-selected="false" aria-pressed="false" data-view="saved">Saved <span class="count" id="count-saved"></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="toolbar">
+      <input id="q" class="search" type="search" placeholder="Search roles (title, employer, city)…"/>
+      <select id="programme" class="select" title="Programme">
+        <option value="all" selected>All programmes</option>
+        <option value="summer">Summer</option>
+        <option value="placement">Placement</option>
+        <option value="grad">Graduate</option>
+      </select>
+      <select id="year" class="select" title="Year">
+        <option value="any" selected>Any year</option>
+        <option value="1">1st</option>
+        <option value="2">2nd</option>
+        <option value="penultimate">Penultimate</option>
+        <option value="final">Final</option>
+        <option value="masters">Masters</option>
+      </select>
+      <select id="discipline" class="select" title="Sub-discipline">
+        <option value="all" selected>All disciplines</option>
+        <option value="design">Design Eng</option>
+        <option value="mech">Mechanical</option>
+        <option value="eee">EEE</option>
+        <option value="aero">Aerospace</option>
+        <option value="civils">Civils</option>
+        <option value="manufacturing">Manufacturing</option>
+        <option value="process">Process</option>
+        <option value="mechatronics">Mechatronics</option>
+      </select>
+      <div class="win" title="Weekly progress">
+        <div class="ring" aria-label="Weekly progress">
+          <svg width="24" height="24" viewBox="0 0 36 36" role="img">
+            <circle cx="18" cy="18" r="16" fill="none" stroke="#e2e8f0" stroke-width="4" />
+            <circle id="ringFG" cx="18" cy="18" r="16" fill="none" stroke="var(--brand)" stroke-width="4" stroke-dasharray="0 100" stroke-linecap="round"/>
+          </svg>
+          <div class="num" id="ringNum">0%</div>
+        </div>
+        <span style="font-size:12px;color:var(--muted)">Win-the-Week</span>
+      </div>
+    </div>
+
+    <!-- Weekly digest card -->
+    <section style="margin:16px 0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)">
+      <div style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <span aria-hidden="true" style="font-size:18px">✉️</span>
+          <div>
+            <div style="font-weight:600">Weekly digest</div>
+            <div style="color:var(--muted);font-size:13px">
+              Monday 8:00 — Includes: Newly open, Closing this week, Opens next week.
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="email" type="email" placeholder="your.email@example.com"
+                 aria-label="Email address"
+                 class="search" style="padding:8px 10px;min-width:260px"/>
+          <button class="btn primary" onclick="fakeSubscribe()">Subscribe</button>
+        </div>
+      </div>
+      <div id="subMsg" style="margin-top:8px;color:var(--muted);font-size:12px"></div>
+    </section>
+
+    <div class="tablewrap">
+      <table aria-describedby="count">
+        <thead>
+          <tr>
+            <th data-sort="position" scope="col">Position</th>
+            <th data-sort="closes" scope="col">Closes</th>
+            <th data-sort="days" scope="col">Due in</th>
+            <th scope="col">My status</th>
+            <th class="col-actions" scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div id="count" style="color:var(--muted);font-size:14px;margin-top:8px">0 results</div>
+  </main>
+
+  <!-- Report issue modal -->
+  <div id="reportModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <h3 id="reportTitle">Report a problem</h3>
+      <div id="reportRole" class="meta" style="margin-bottom:8px"></div>
+      <div class="form-row">
+        <label><input type="radio" name="reason" value="Scam / suspicious" checked> Scam / suspicious</label>
+        <label><input type="radio" name="reason" value="Broken link"> Broken or dead link</label>
+        <label><input type="radio" name="reason" value="Not UK / irrelevant"> Not UK / irrelevant</label>
+        <label><input type="radio" name="reason" value="Eligibility wrong"> Eligibility wrong</label>
+        <label><input type="radio" name="reason" value="Already closed"> Already closed</label>
+        <label><input type="radio" name="reason" value="Other"> Other</label>
+      </div>
+      <div class="form-row">
+        <textarea id="reportDetails" placeholder="Add any details (optional)…"></textarea>
+      </div>
+      <div class="form-row">
+        <input id="reportEmail" type="email" placeholder="your email (optional)" class="search" style="padding:10px;max-width:260px"/>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeReport()">Cancel</button>
+        <button class="btn primary" onclick="submitReport()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Helpers
+    const fmt = d => d ? new Date(d).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : '—';
+    function daysLeft(close){ if(!close) return null; const ms=(new Date(close)-new Date()); return Math.ceil(ms/86400000); }
+    function cap(s){return s? s.charAt(0).toUpperCase()+s.slice(1) : ''}
+
+    // ---------- Seed roles (kept from your draft + generator)
+    const roles = [
+      {id:'seed-01', company:'Aurora Labs', apply:'#', position:'Design Engineering Summer Intern', location:'London • UK', programme:'summer', status:'open', opens:'2025-08-01', closes:'2025-09-15', years:['penultimate','final','masters'], sub:['design','mech']},
+      {id:'seed-02', company:'TriAxis', apply:'#', position:'Graduate Mechanical Engineer', location:'Bristol • UK', programme:'grad', status:'open', opens:'2025-07-20', closes:'2025-09-01', years:['final','masters'], sub:['mech','manufacturing']},
+      {id:'ex-1yr', company:'NovaStart', apply:'#', position:'First-Year Design Intern', location:'Leeds • UK', programme:'summer', status:'open', opens:'2025-08-05', closes:'2025-09-06', years:['1'], sub:['design','mech']},
+      {id:'ex-2yr', company:'CircuitWave', apply:'#', position:'Second-Year EEE Intern', location:'Glasgow • UK', programme:'summer', status:'open', opens:'2025-08-02', closes:'2025-09-01', years:['2'], sub:['eee']},
+      {id:'ex-masters', company:'Cobalt Aero', apply:'#', position:'Masters Research Intern — Aerodynamics', location:'Cranfield • UK', programme:'summer', status:'open', opens:'2025-08-07', closes:'2025-09-20', years:['masters'], sub:['aero','mech']},
+      {id:'ex-masters-grad', company:'Summit Energy', apply:'#', position:'Graduate Systems Engineer (Masters only)', location:'Bristol • UK', programme:'grad', status:'rolling', opens:'2025-07-18', closes:null, years:['masters'], sub:['mechatronics','eee']}
+    ];
+
+    const companies = ["Pioneer Dynamics","VoltWorks","TerraGrid","HydraFlow","Northbridge Rail","Seabright Marine","Photonix","Crucible Mfg","Luminex","Summit Energy","Atlas Robotics","Blueforge","Metriq","Orbitronics","Stonebridge","ClearTrace","Hearth Systems","Cobalt Aero","Ironclad Mining","HarborTech","Quantico Sensors","Silverline Medical","Vantage Automotive","Nimbus Systems","Grafton Materials","EcoLoop","Skybound Drones","RailCore","BioValve","NanoFab","Resonant Labs","Polar Pumps","Axiom Controls","FerroChem","GreenLink Water","Copperleaf Grid","Horizon Turbines","Sapphire Optics","Helix Motion","Zenith Structures","Turing Engines","JetWave Labs","Mercury Auto","GreenChem","Micronova","LayerLabs","River & Stone","Dynatek"];
+    const positions = {
+      summer:["Design Engineering Summer Intern","Mechanical Summer Intern","Manufacturing Engineering Intern","Controls & Automation Intern","Product Design Intern","Robotics R&D Intern","Embedded Systems Intern","CFD Research Intern","Thermofluids Research Intern","Materials R&D Intern","Aerospace Structures Intern","Process Engineering Intern","Electronic Design Intern","Systems Integration Intern"],
+      placement:["Civil Engineering Placement (12 mo)","Process Engineering Placement","Quality Engineering Placement","Mechatronics Placement","Manufacturing Placement","Software-for-Devices Placement","Operations Engineering Placement"],
+      grad:["Graduate Mechanical Engineer","Graduate Mechatronics Engineer","Graduate Design Engineer","Graduate EEE Engineer","Graduate Process Engineer","Graduate Civil Engineer","Graduate Reliability Engineer","Aerospace Graduate Programme","Graduate Systems Engineer"]
+    };
+    const locations = ["London • UK","Manchester • UK","Birmingham • UK","Bristol • UK","Edinburgh • UK","Glasgow • UK","Leeds • UK","Sheffield • UK","Newcastle • UK","Nottingham • UK","Southampton • UK","Coventry • UK","Cambridge • UK","Oxford • UK","Reading • UK","Derby • UK","Leicester • UK","Liverpool • UK","Cardiff • UK","Belfast • UK","York • UK","Bath • UK","Milton Keynes • UK","Guildford • UK","Loughborough • UK","Aberdeen • UK","Exeter • UK","Durham • UK","Warwick • UK"];
+
+    function R(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+    function dateStr(d){ return d.toISOString().slice(0,10); }
+    function randDate(a,b){ const s=new Date(a), e=new Date(b); const t=s.getTime()+Math.random()*(e.getTime()-s.getTime()); return dateStr(new Date(t)); }
+    function chooseYears(programme){
+      if(programme==='summer') return R([["1"],["2"],["1","2"],["2","penultimate"],["penultimate","final"],["penultimate","final","masters"]]);
+      if(programme==='placement') return R([["2"],["penultimate"]]);
+      if(programme==='grad') return R([["final","masters"],["masters"]]);
+      return ["penultimate","final"];
+    }
+    function seedFake(n){
+      const openStart='2025-07-20', openEnd='2025-08-15';
+      const closeStart='2025-08-20', closeEnd='2025-11-15';
+      const futureStart='2025-09-01', futureEnd='2025-10-15';
+      let next=1000;
+      for(let i=0;i<n;i++){
+        const programme = R(['summer','placement','grad']);
+        const r = Math.random();
+        const status = (r < 0.16 ? 'opens_on' : (programme==='grad' && r < 0.40 ? 'rolling' : 'open'));
+        const position = R(positions[programme]);
+        const company = R(companies);
+        const location = R(locations);
+        const years = chooseYears(programme);
+        const sub =
+          position.includes('Civil')||position.includes('Structural')?['civils'] :
+          position.includes('Process')?['process','manufacturing'] :
+          position.includes('Manufacturing')||position.includes('Quality')?['manufacturing','mech'] :
+          position.includes('EEE')||position.includes('Electronic')||position.includes('Embedded')?['eee'] :
+          position.includes('Aerospace')||position.includes('CFD')||position.includes('Thermofluids')?['aero','mech'] :
+          position.includes('Mechatronics')||position.includes('Robotics')||position.includes('Controls')||position.includes('Systems')?['mechatronics','eee'] :
+          position.includes('Design')||position.includes('Product')?['design','mech'] :
+          position.includes('Mechanical')||position.includes('Reliability')?['mech'] :
+          ['design','mech'];
+
+        let opens, closes;
+        if(status==='opens_on'){ opens=randDate(futureStart,futureEnd); closes=randDate(closeStart,closeEnd); }
+        else { opens=randDate(openStart,openEnd); closes = (programme!=='grad' || Math.random()<0.8) ? randDate(closeStart,closeEnd) : null; }
+        roles.push({ id:`f${next++}`, company, apply:'#', position, location, programme, status, opens, closes, years, sub });
+      }
+    }
+
+    // ---------- Progress store (fixed: not tracked until user acts)
+    const PROG_KEY='engtrackr_progress';
+    let progress=JSON.parse(localStorage.getItem(PROG_KEY)||'{}');
+    function isTracked(id){ return Object.prototype.hasOwnProperty.call(progress,id); }
+    function getProgress(id){ return progress[id]?.status || null; }
+    function labelPlain(s){ if(!s) return 'Track'; return s==='saved' ? 'Saved' : s.charAt(0).toUpperCase()+s.slice(1); }
+    function labelFor(id){ const s=getProgress(id); return labelPlain(s) + ' ▾'; }
+    function setProgress(id,status){ progress[id]={status,ts:new Date().toISOString()}; localStorage.setItem(PROG_KEY, JSON.stringify(progress)); render(); bumpWeek(); }
+
+    function closeMenus(){ document.querySelectorAll('.menu').forEach(m=> m.style.display='none'); }
+    function toggleMenu(id){ closeMenus(); const m=document.getElementById('m-'+id); if(m){ m.style.display='block'; } }
+
+    function closeMoreMenus(){ document.querySelectorAll('.more-menu').forEach(m=> m.style.display='none'); }
+    function toggleMore(id){ const m=document.getElementById('more-'+id); if(!m) return; const open = m.style.display==='block'; closeMoreMenus(); if(!open) m.style.display='block'; }
+    function closeAllMenus(){ closeMenus(); closeMoreMenus(); }
+    document.addEventListener('click', closeAllMenus);
+
+    // ---------- State & render
+    const state = {q:'', programme:'all', year:'any', discipline:'all', sort:'days', view:'all'};
+    const tbody = document.getElementById('tbody');
+
+    function computeCounts(){
+      const all = roles.filter(r => (r.status==='open' || r.status==='rolling'));
+      const due = all.filter(r => { const d=daysLeft(r.closes); return d!==null && d>=0 && d<=14; });
+      const saved = all.filter(r => isTracked(r.id));
+      return {all: all.length, due: due.length, saved: saved.length};
+    }
+
+    function setTab(view){
+      state.view=view;
+      document.querySelectorAll('.tab').forEach(b=>{
+        const on = b.dataset.view===view;
+        b.setAttribute('aria-pressed', on?'true':'false');
+        b.setAttribute('aria-selected', on?'true':'false');
+      });
+      render();
+    }
+
+    function render(){
+      tbody.innerHTML='';
+      let list = roles
+        .filter(r => (r.status==='open' || r.status==='rolling'))
+        .filter(r => state.programme==='all' || r.programme===state.programme)
+        .filter(r => (state.year==='any' || r.years.includes(state.year)))
+        .filter(r => (state.discipline==='all' || r.sub.includes(state.discipline)))
+        .filter(r => !state.q || (r.company+" "+r.position+" "+r.location).toLowerCase().includes(state.q));
+
+      // view filters
+      if(state.view==='due'){
+        list = list.filter(r => { const d=daysLeft(r.closes); return d!==null && d>=0 && d<=14; });
+      } else if(state.view==='saved'){
+        list = list.filter(r => isTracked(r.id));
+      }
+
+      // sort
+      list.sort((a,b)=>{
+        if(state.sort==='position') return a.position.localeCompare(b.position);
+        if(state.sort==='closes') return (new Date(a.closes||'2099-12-31') - new Date(b.closes||'2099-12-31'));
+        if(state.sort==='days'){ const da = daysLeft(a.closes) ?? 9999; const db = daysLeft(b.closes) ?? 9999; return da-db; }
+        return 0;
+      });
+
+      // counts
+      const c = computeCounts();
+      document.getElementById('count-all').textContent = `(${c.all})`;
+      document.getElementById('count-due').textContent = `(${c.due})`;
+      document.getElementById('count-saved').textContent = `(${c.saved})`;
+      document.getElementById('count').textContent = `${list.length} results`;
+
+      for(const r of list){
+        const tr = document.createElement('tr'); tr.id = r.id;
+
+        const cPos = document.createElement('td');
+        const wrap = document.createElement('div'); wrap.className='title';
+        const pos = document.createElement('div'); pos.className='pos'; pos.textContent=r.position;
+        const meta = document.createElement('div'); meta.className='meta'; meta.textContent = `${r.company} • ${r.location} • ${cap(r.programme)}`;
+        wrap.appendChild(pos); wrap.appendChild(meta); cPos.appendChild(wrap); tr.appendChild(cPos);
+
+        const cCloses = document.createElement('td'); cCloses.textContent=fmt(r.closes); tr.appendChild(cCloses);
+
+        const cDays = document.createElement('td');
+        const dl = daysLeft(r.closes);
+        const dlEl=document.createElement('span'); dlEl.className='days';
+        if(dl===null){ dlEl.classList.add('d-ok'); dlEl.textContent=r.status==='rolling'?'—':'TBC'; }
+        else if(dl<0){ dlEl.classList.add('d-urgent'); dlEl.textContent='Closed'; }
+        else if(dl<7){ dlEl.classList.add('d-urgent'); dlEl.textContent=`${dl}d`; }
+        else if(dl<14){ dlEl.classList.add('d-soon'); dlEl.textContent=`${dl}d`; }
+        else { dlEl.classList.add('d-ok'); dlEl.textContent=`${dl}d`; }
+        const rem=document.createElement('button'); rem.className='link'; rem.textContent='Remind'; rem.onclick=()=>{ downloadICS(r); bumpWeek(); };
+        cDays.appendChild(dlEl); cDays.appendChild(rem); tr.appendChild(cDays);
+
+        // My status
+        const cUser = document.createElement('td'); cUser.style.position='relative';
+        const chip = document.createElement('button'); chip.className='chip ' + (getProgress(r.id)||''); chip.textContent=labelFor(r.id);
+        chip.onclick=(ev)=>{ ev.stopPropagation(); toggleMenu(r.id); };
+        const menu = document.createElement('div'); menu.className='menu'; menu.id='m-'+r.id;
+        ['saved','applied','interviewing','offer','rejected'].forEach(s=>{
+          const b=document.createElement('button'); b.textContent=labelPlain(s);
+          b.onclick=()=>{ setProgress(r.id,s); closeMenus(); };
+          menu.appendChild(b);
+        });
+        cUser.appendChild(chip); cUser.appendChild(menu); tr.appendChild(cUser);
+
+        // Actions (last)
+        const cAct = document.createElement('td'); cAct.className='col-actions';
+        const apply=document.createElement('a'); apply.className='btn primary'; apply.textContent='Apply'; apply.href=r.apply; apply.target='_blank'; apply.rel='noopener';
+        apply.addEventListener('click',(ev)=>{ window.open(r.apply,'_blank','noopener'); showApplyBar(r); });
+        cAct.appendChild(apply);
+
+        const more=document.createElement('div'); more.className='more';
+        const moreBtn=document.createElement('button'); moreBtn.className='more-btn'; moreBtn.setAttribute('aria-label',`More actions for ${r.position}`); moreBtn.textContent='⋯';
+        moreBtn.onclick=(ev)=>{ ev.stopPropagation(); toggleMore(r.id); };
+        const moreMenu=document.createElement('div'); moreMenu.className='more-menu'; moreMenu.id='more-'+r.id;
+        const miReport=document.createElement('button'); miReport.textContent='Report issue'; miReport.onclick=()=>{ openReport(r); closeMoreMenus(); };
+        const miCopy=document.createElement('button'); miCopy.textContent='Copy link'; miCopy.onclick=()=>{ copyRoleLink(r); closeMoreMenus(); };
+        const miShare=document.createElement('button'); miShare.textContent='Share…'; miShare.onclick=()=>{ shareRole(r); closeMoreMenus(); };
+        moreMenu.appendChild(miReport); moreMenu.appendChild(miCopy); moreMenu.appendChild(miShare);
+        more.appendChild(moreBtn); more.appendChild(moreMenu);
+        cAct.appendChild(more);
+        tr.appendChild(cAct);
+
+        tbody.appendChild(tr);
+      }
+    }
+
+    // ---------- Apply helper bar (worked? problem?)
+    function showApplyBar(r){
+      const bar=document.createElement('div');
+      bar.style.position='fixed'; bar.style.bottom='20px'; bar.style.left='50%'; bar.style.transform='translateX(-50%)';
+      bar.style.background='#111827'; bar.style.color='#fff'; bar.style.padding='10px 12px';
+      bar.style.borderRadius='10px'; bar.style.boxShadow='var(--shadow)'; bar.style.zIndex='1000';
+      bar.textContent='Did the apply link work? ';
+      const yes=document.createElement('button'); yes.textContent='Applied'; yes.style.marginLeft='8px'; yes.style.background='#fff'; yes.style.border='none'; yes.style.borderRadius='8px'; yes.style.padding='6px 10px'; yes.style.cursor='pointer';
+      yes.onclick=()=>{ setProgress(r.id,'applied'); document.body.removeChild(bar); };
+      const prob=document.createElement('button'); prob.textContent='Problem'; prob.style.marginLeft='6px'; prob.style.background='transparent'; prob.style.color='#cbd5e1'; prob.style.border='1px solid #475569'; prob.style.borderRadius='8px'; prob.style.padding='6px 10px'; prob.style.cursor='pointer';
+      prob.onclick=()=>{ document.body.removeChild(bar); openReport(r); const radio=[...document.querySelectorAll('input[name="reason"]')].find(x=>x.value==='Broken link'); if(radio){ radio.checked=true; } };
+      const mail=document.createElement('a'); mail.textContent='Email us'; mail.href='mailto:support@engtrackr.example?subject=Apply%20link%20problem&body=Role:%20'+encodeURIComponent(r.position+' — '+r.company); mail.style.marginLeft='6px'; mail.style.color='#93c5fd';
+      const close=document.createElement('button'); close.textContent='Close'; close.style.marginLeft='6px'; close.style.background='transparent'; close.style.color='#cbd5e1'; close.style.border='none'; close.style.cursor='pointer';
+      close.onclick=()=>document.body.removeChild(bar);
+      bar.appendChild(yes); bar.appendChild(prob); bar.appendChild(mail); bar.appendChild(close);
+      document.body.appendChild(bar);
+    }
+
+    // ---------- Sharing helpers
+    function roleURL(r){ try{ const u=new URL(window.location.href); u.hash=r.id; return u.toString(); }catch(e){ return window.location.href; } }
+    function copyRoleLink(r){ const text = roleURL(r); if(navigator.clipboard){ navigator.clipboard.writeText(text).then(()=>toast('Link copied')); } else { const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); toast('Link copied'); } }
+    function shareRole(r){ const data={ title:r.position, text:`${r.position} — ${r.company}`, url:roleURL(r) }; if(navigator.share){ navigator.share(data).catch(()=>{}); } else { copyRoleLink(r); } }
+
+    // ---------- UX helpers
+    function toast(msg){ const d=document.createElement('div'); d.textContent=msg; d.style.position='fixed'; d.style.bottom='20px'; d.style.right='20px'; d.style.background='#111827'; d.style.color='#fff'; d.style.padding='10px 12px'; d.style.borderRadius='10px'; d.style.boxShadow='var(--shadow)'; d.style.zIndex='1000'; document.body.appendChild(d); setTimeout(()=>d.remove(),1500); }
+    function downloadICS(r){ const title=`${r.position} — ${r.company}`; const start=r.closes?new Date(r.closes):new Date(); const end=new Date(start.getTime()+60*60*1000); function toICSDate(d){const pad=n=>String(n).padStart(2,'0'); return d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+'00Z';} const desc=`${r.location} • ${cap(r.programme)}\nStatus: ${r.status}\nCreated by EngTrackr mock`; const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//EngTrackr//EN\nBEGIN:VEVENT\nUID:${r.id}-${Date.now()}@engtrackr\nDTSTAMP:${toICSDate(new Date())}\nSUMMARY:${title}\nDTSTART:${toICSDate(start)}\nDTEND:${toICSDate(end)}\nDESCRIPTION:${desc}\nEND:VEVENT\nEND:VCALENDAR`; const blob=new Blob([ics],{type:'text/calendar'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`${r.company.replace(/\s+/g,'_')}-${r.position.replace(/\s+/g,'_')}.ics`; a.click(); URL.revokeObjectURL(url); toast('Reminder file created. Add it to your calendar.'); }
+    let weekProgress=0; function bumpWeek(){ weekProgress=Math.min(100,weekProgress+25); document.getElementById('ringFG').setAttribute('stroke-dasharray', `${weekProgress} 100`); document.getElementById('ringNum').textContent=weekProgress+'%'; }
+    function fakeSubscribe(){ const v=document.getElementById('email').value.trim(); const m=document.getElementById('subMsg'); if(!v||!v.includes('@')){ m.textContent='Please enter a valid email.'; m.style.color='var(--warn)'; return;} m.textContent='Subscribed. Monday digests coming your way.'; m.style.color='var(--ink)'; toast('Subscribed to weekly digest'); bumpWeek(); }
+
+    // ---------- Report issue
+    let reportTarget=null;
+    function openReport(r){ reportTarget=r; document.getElementById('reportRole').textContent=`${r.position} — ${r.company}`; document.getElementById('reportDetails').value=''; document.getElementById('reportEmail').value=''; document.getElementById('reportModal').classList.add('show'); }
+    function closeReport(){ document.getElementById('reportModal').classList.remove('show'); }
+    function submitReport(){ const reason=(document.querySelector('input[name="reason"]:checked')||{}).value||'Other'; const details=document.getElementById('reportDetails').value.trim(); const email=document.getElementById('reportEmail').value.trim(); const key='engtrackr_reports'; const payload={ roleId:reportTarget?.id, position:reportTarget?.position, company:reportTarget?.company, reason, details, email, ts:new Date().toISOString() }; const arr=JSON.parse(localStorage.getItem(key)||'[]'); arr.push(payload); localStorage.setItem(key, JSON.stringify(arr)); closeReport(); toast('Thanks — report received.'); }
+    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeReport(); });
+    document.getElementById('reportModal').addEventListener('click', closeReport);
+
+    // ---------- Controls
+    document.getElementById('q').addEventListener('input',(e)=>{ state.q=e.target.value.trim().toLowerCase(); render(); });
+    document.getElementById('programme').addEventListener('change',(e)=>{ state.programme=e.target.value; render(); });
+    document.getElementById('year').addEventListener('change',(e)=>{ state.year=e.target.value; render(); });
+    document.getElementById('discipline').addEventListener('change',(e)=>{ state.discipline=e.target.value; render(); });
+    document.querySelectorAll('th[data-sort]').forEach(th=> th.addEventListener('click', ()=>{ state.sort=th.dataset.sort; render(); }));
+    document.querySelectorAll('.tab').forEach(b=> b.addEventListener('click', ()=> setTab(b.dataset.view)) );
+
+    // ---------- Boot
+    document.addEventListener('DOMContentLoaded', ()=>{ try{ seedFake(120); }catch(e){ console.error(e); } setTab('all'); render(); });
+  </script>
+</body>
+</html>
