@@ -1,12 +1,14 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EngTrackr — Backbone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EngTrackr — Backbone (Mock with Fake Listings)</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root{ --bg:#f8fafc; --surface:#ffffff; --ink:#0f172a; --muted:#475569; --line:#e5e7eb; --brand:#2563eb; --warn:#b91c1c; --ok:#0e7490; --thead:#f3f6fb; --shadow:0 8px 24px rgba(2,6,23,.06); --radius:14px; }
     html,body{height:100%}
@@ -17,21 +19,14 @@
     .brand{display:flex;align-items:center;gap:10px;font-weight:800}
     .logo{width:24px;height:24px;border-radius:6px;background:var(--brand);box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
 
-    /* toolbar */
-    .toolbar{display:grid;grid-template-columns:1fr auto auto auto auto;gap:10px;align-items:center;margin:16px 0}
+    .toolbar{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;margin:16px 0}
     .search{padding:12px;border:1px solid var(--line);border-radius:10px;width:100%}
     .select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
 
-    /* segmented tabs */
     .tabs{display:inline-flex;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px}
     .tab{border:none;background:transparent;padding:8px 12px;border-radius:999px;font-weight:600;color:var(--muted);cursor:pointer}
     .tab[aria-pressed="true"]{background:var(--brand);color:#fff}
     .tab .count{opacity:.8;font-weight:700;margin-left:6px}
-
-    /* ring */
-    .win{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:#fff}
-    .ring{--size:24px;position:relative;width:var(--size);height:var(--size);display:grid;place-items:center}
-    .ring svg{transform:rotate(-90deg)} .ring .num{position:absolute;font-weight:800;font-size:10px;color:var(--muted)}
 
     .tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:auto}
     table{width:100%;border-collapse:separate;border-spacing:0}
@@ -50,9 +45,7 @@
 
     .days{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
     .d-ok{background:#ecfeff;color:var(--ok)} .d-soon{background:#fffbeb;color:#92400e} .d-urgent{background:#b91c1c;color:#fff}
-    .link{background:transparent;border:none;color:var(--brand);cursor:pointer;margin-left:8px;font-size:12px;font-weight:600;text-decoration:underline}
 
-    /* status chip + menu */
     .chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;border:1px solid var(--line);cursor:pointer;background:#fff}
     .chip.applied{background:#e0e7ff;color:#1e3a8a;border-color:transparent}
     .chip.interviewing{background:#f3e8ff;color:#5b21b6;border-color:transparent}
@@ -62,14 +55,12 @@
     .menu button{display:block;width:100%;text-align:left;border:none;background:transparent;padding:8px 10px;border-radius:8px;cursor:pointer}
     .menu button:hover{background:#f8fafc}
 
-    /* more actions (ellipsis) */
     .more{position:relative;display:inline-block;margin-left:8px}
     .more-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer}
     .more-menu{position:absolute;right:0;top:44px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:6px;display:none;z-index:30;min-width:170px}
     .more-menu button{display:block;width:100%;text-align:left;border:none;background:transparent;padding:8px 10px;border-radius:8px;cursor:pointer}
     .more-menu button:hover{background:#f8fafc}
 
-    /* report modal */
     .modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:1000}
     .modal.show{display:flex}
     .modal-card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);width:min(560px,92vw);padding:16px}
@@ -78,11 +69,9 @@
     .form-row textarea{width:100%;min-height:80px;padding:10px;border:1px solid var(--line);border-radius:10px}
     .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
 
-    /* small */
     @media (max-width: 760px){
       .toolbar{grid-template-columns:1fr 1fr;grid-auto-rows:min-content}
       .toolbar .select{min-width:100%}
-      .toolbar .win{grid-column:1/-1}
       .tabs{display:flex;flex-wrap:wrap}
     }
   </style>
@@ -91,7 +80,6 @@
   <header>
     <div class="wrap nav" role="navigation" aria-label="Primary">
       <div class="brand"><div class="logo" aria-hidden="true"></div><div>EngTrackr</div></div>
-      <!-- Replaced old top links with a focused segmented control -->
       <div class="tabs" role="tablist" aria-label="Views">
         <button id="tab-all" class="tab" role="tab" aria-selected="true" aria-pressed="true" data-view="all">All roles <span class="count" id="count-all"></span></button>
         <button id="tab-due" class="tab" role="tab" aria-selected="false" aria-pressed="false" data-view="due">Due soon <span class="count" id="count-due"></span></button>
@@ -113,7 +101,7 @@
         <option value="any" selected>Any year</option>
         <option value="1">1st</option>
         <option value="2">2nd</option>
-        <option value="penultimate">Penultimate</option>
+        <option value="3">3rd</option>
         <option value="final">Final</option>
         <option value="masters">Masters</option>
       </select>
@@ -128,34 +116,19 @@
         <option value="process">Process</option>
         <option value="mechatronics">Mechatronics</option>
       </select>
-      <div class="win" title="Weekly progress">
-        <div class="ring" aria-label="Weekly progress">
-          <svg width="24" height="24" viewBox="0 0 36 36" role="img">
-            <circle cx="18" cy="18" r="16" fill="none" stroke="#e2e8f0" stroke-width="4" />
-            <circle id="ringFG" cx="18" cy="18" r="16" fill="none" stroke="var(--brand)" stroke-width="4" stroke-dasharray="0 100" stroke-linecap="round"/>
-          </svg>
-          <div class="num" id="ringNum">0%</div>
-        </div>
-        <span style="font-size:12px;color:var(--muted)">Win-the-Week</span>
-      </div>
     </div>
 
-    <!-- Weekly digest card -->
     <section style="margin:16px 0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)">
       <div style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center">
         <div style="display:flex;gap:10px;align-items:flex-start">
           <span aria-hidden="true" style="font-size:18px">✉️</span>
           <div>
             <div style="font-weight:600">Weekly digest</div>
-            <div style="color:var(--muted);font-size:13px">
-              Monday 8:00 — Includes: Newly open, Closing this week, Opens next week.
-            </div>
+            <div style="color:var(--muted);font-size:13px">Monday 8:00 — Includes: Newly open, Closing this week, Opens next week.</div>
           </div>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
-          <input id="email" type="email" placeholder="your.email@example.com"
-                 aria-label="Email address"
-                 class="search" style="padding:8px 10px;min-width:260px"/>
+          <input id="email" type="email" placeholder="your.email@example.com" aria-label="Email address" class="search" style="padding:8px 10px;min-width:260px"/>
           <button class="btn primary" onclick="fakeSubscribe()">Subscribe</button>
         </div>
       </div>
@@ -192,12 +165,8 @@
         <label><input type="radio" name="reason" value="Already closed"> Already closed</label>
         <label><input type="radio" name="reason" value="Other"> Other</label>
       </div>
-      <div class="form-row">
-        <textarea id="reportDetails" placeholder="Add any details (optional)…"></textarea>
-      </div>
-      <div class="form-row">
-        <input id="reportEmail" type="email" placeholder="your email (optional)" class="search" style="padding:10px;max-width:260px"/>
-      </div>
+      <div class="form-row"><textarea id="reportDetails" placeholder="Add any details (optional)…"></textarea></div>
+      <div class="form-row"><input id="reportEmail" type="email" placeholder="your email (optional)" class="search" style="padding:10px;max-width:260px"/></div>
       <div class="modal-actions">
         <button class="btn" onclick="closeReport()">Cancel</button>
         <button class="btn primary" onclick="submitReport()">Send</button>
@@ -211,7 +180,7 @@
     function daysLeft(close){ if(!close) return null; const ms=(new Date(close)-new Date()); return Math.ceil(ms/86400000); }
     function cap(s){return s? s.charAt(0).toUpperCase()+s.slice(1) : ''}
 
-    // ---------- Seed roles (kept from your draft + generator)
+    // ---------- Fake listings (seed + generator)
     const roles = [
       {id:'seed-01', company:'Aurora Labs', apply:'#', position:'Design Engineering Summer Intern', location:'London • UK', programme:'summer', status:'open', opens:'2025-08-01', closes:'2025-09-15', years:['penultimate','final','masters'], sub:['design','mech']},
       {id:'seed-02', company:'TriAxis', apply:'#', position:'Graduate Mechanical Engineer', location:'Bristol • UK', programme:'grad', status:'open', opens:'2025-07-20', closes:'2025-09-01', years:['final','masters'], sub:['mech','manufacturing']},
@@ -221,7 +190,7 @@
       {id:'ex-masters-grad', company:'Summit Energy', apply:'#', position:'Graduate Systems Engineer (Masters only)', location:'Bristol • UK', programme:'grad', status:'rolling', opens:'2025-07-18', closes:null, years:['masters'], sub:['mechatronics','eee']}
     ];
 
-    const companies = ["Pioneer Dynamics","VoltWorks","TerraGrid","HydraFlow","Northbridge Rail","Seabright Marine","Photonix","Crucible Mfg","Luminex","Summit Energy","Atlas Robotics","Blueforge","Metriq","Orbitronics","Stonebridge","ClearTrace","Hearth Systems","Cobalt Aero","Ironclad Mining","HarborTech","Quantico Sensors","Silverline Medical","Vantage Automotive","Nimbus Systems","Grafton Materials","EcoLoop","Skybound Drones","RailCore","BioValve","NanoFab","Resonant Labs","Polar Pumps","Axiom Controls","FerroChem","GreenLink Water","Copperleaf Grid","Horizon Turbines","Sapphire Optics","Helix Motion","Zenith Structures","Turing Engines","JetWave Labs","Mercury Auto","GreenChem","Micronova","LayerLabs","River & Stone","Dynatek"];
+    const companies = ["Pioneer Dynamics","VoltWorks","TerraGrid","HydraFlow","Northbridge Rail","Seabright Marine","Photonix","Crucible Mfg","Luminex","Atlas Robotics","Blueforge","Metriq","Orbitronics","Stonebridge","ClearTrace","Hearth Systems","Ironclad Mining","HarborTech","Quantico Sensors","Silverline Medical","Vantage Automotive","Nimbus Systems","Grafton Materials","EcoLoop","Skybound Drones","RailCore","BioValve","NanoFab","Resonant Labs","Polar Pumps","Axiom Controls","FerroChem","GreenLink Water","Copperleaf Grid","Horizon Turbines","Sapphire Optics","Helix Motion","Zenith Structures","Turing Engines","JetWave Labs","Mercury Auto","GreenChem","Micronova","LayerLabs","River & Stone","Dynatek"];
     const positions = {
       summer:["Design Engineering Summer Intern","Mechanical Summer Intern","Manufacturing Engineering Intern","Controls & Automation Intern","Product Design Intern","Robotics R&D Intern","Embedded Systems Intern","CFD Research Intern","Thermofluids Research Intern","Materials R&D Intern","Aerospace Structures Intern","Process Engineering Intern","Electronic Design Intern","Systems Integration Intern"],
       placement:["Civil Engineering Placement (12 mo)","Process Engineering Placement","Quality Engineering Placement","Mechatronics Placement","Manufacturing Placement","Software-for-Devices Placement","Operations Engineering Placement"],
@@ -269,18 +238,17 @@
       }
     }
 
-    // ---------- Progress store (fixed: not tracked until user acts)
+    // ---------- Progress store (localStorage)
     const PROG_KEY='engtrackr_progress';
     let progress=JSON.parse(localStorage.getItem(PROG_KEY)||'{}');
     function isTracked(id){ return Object.prototype.hasOwnProperty.call(progress,id); }
     function getProgress(id){ return progress[id]?.status || null; }
-    function labelPlain(s){ if(!s) return 'Track'; return s==='saved' ? 'Saved' : s.charAt(0).toUpperCase()+s.slice(1); }
+    function labelPlain(s){ if(!s) return 'Save'; return s==='saved' ? 'Saved' : s.charAt(0).toUpperCase()+s.slice(1); }
     function labelFor(id){ const s=getProgress(id); return labelPlain(s) + ' ▾'; }
-    function setProgress(id,status){ progress[id]={status,ts:new Date().toISOString()}; localStorage.setItem(PROG_KEY, JSON.stringify(progress)); render(); bumpWeek(); }
+    function setProgress(id,status){ progress[id]={status,ts:new Date().toISOString()}; localStorage.setItem(PROG_KEY, JSON.stringify(progress)); render(); }
 
     function closeMenus(){ document.querySelectorAll('.menu').forEach(m=> m.style.display='none'); }
     function toggleMenu(id){ closeMenus(); const m=document.getElementById('m-'+id); if(m){ m.style.display='block'; } }
-
     function closeMoreMenus(){ document.querySelectorAll('.more-menu').forEach(m=> m.style.display='none'); }
     function toggleMore(id){ const m=document.getElementById('more-'+id); if(!m) return; const open = m.style.display==='block'; closeMoreMenus(); if(!open) m.style.display='block'; }
     function closeAllMenus(){ closeMenus(); closeMoreMenus(); }
@@ -312,18 +280,20 @@
       let list = roles
         .filter(r => (r.status==='open' || r.status==='rolling'))
         .filter(r => state.programme==='all' || r.programme===state.programme)
-        .filter(r => (state.year==='any' || r.years.includes(state.year)))
+        .filter(r => {
+          if(state.year==='any') return true;
+          if(state.year==='3') return r.years.includes('3') || r.years.includes('penultimate');
+          return r.years.includes(state.year);
+        })
         .filter(r => (state.discipline==='all' || r.sub.includes(state.discipline)))
         .filter(r => !state.q || (r.company+" "+r.position+" "+r.location).toLowerCase().includes(state.q));
 
-      // view filters
       if(state.view==='due'){
         list = list.filter(r => { const d=daysLeft(r.closes); return d!==null && d>=0 && d<=14; });
       } else if(state.view==='saved'){
         list = list.filter(r => isTracked(r.id));
       }
 
-      // sort
       list.sort((a,b)=>{
         if(state.sort==='position') return a.position.localeCompare(b.position);
         if(state.sort==='closes') return (new Date(a.closes||'2099-12-31') - new Date(b.closes||'2099-12-31'));
@@ -331,7 +301,6 @@
         return 0;
       });
 
-      // counts
       const c = computeCounts();
       document.getElementById('count-all').textContent = `(${c.all})`;
       document.getElementById('count-due').textContent = `(${c.due})`;
@@ -357,10 +326,9 @@
         else if(dl<7){ dlEl.classList.add('d-urgent'); dlEl.textContent=`${dl}d`; }
         else if(dl<14){ dlEl.classList.add('d-soon'); dlEl.textContent=`${dl}d`; }
         else { dlEl.classList.add('d-ok'); dlEl.textContent=`${dl}d`; }
-        const rem=document.createElement('button'); rem.className='link'; rem.textContent='Remind'; rem.onclick=()=>{ downloadICS(r); bumpWeek(); };
-        cDays.appendChild(dlEl); cDays.appendChild(rem); tr.appendChild(cDays);
+        cDays.appendChild(dlEl);
+        tr.appendChild(cDays);
 
-        // My status
         const cUser = document.createElement('td'); cUser.style.position='relative';
         const chip = document.createElement('button'); chip.className='chip ' + (getProgress(r.id)||''); chip.textContent=labelFor(r.id);
         chip.onclick=(ev)=>{ ev.stopPropagation(); toggleMenu(r.id); };
@@ -372,7 +340,6 @@
         });
         cUser.appendChild(chip); cUser.appendChild(menu); tr.appendChild(cUser);
 
-        // Actions (last)
         const cAct = document.createElement('td'); cAct.className='col-actions';
         const apply=document.createElement('a'); apply.className='btn primary'; apply.textContent='Apply'; apply.href=r.apply; apply.target='_blank'; apply.rel='noopener';
         apply.addEventListener('click',(ev)=>{ window.open(r.apply,'_blank','noopener'); showApplyBar(r); });
@@ -394,7 +361,7 @@
       }
     }
 
-    // ---------- Apply helper bar (worked? problem?)
+    // ---------- Apply helper bar
     function showApplyBar(r){
       const bar=document.createElement('div');
       bar.style.position='fixed'; bar.style.bottom='20px'; bar.style.left='50%'; bar.style.transform='translateX(-50%)';
@@ -412,16 +379,12 @@
       document.body.appendChild(bar);
     }
 
-    // ---------- Sharing helpers
+    // ---------- Sharing + UX helpers
     function roleURL(r){ try{ const u=new URL(window.location.href); u.hash=r.id; return u.toString(); }catch(e){ return window.location.href; } }
     function copyRoleLink(r){ const text = roleURL(r); if(navigator.clipboard){ navigator.clipboard.writeText(text).then(()=>toast('Link copied')); } else { const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); toast('Link copied'); } }
     function shareRole(r){ const data={ title:r.position, text:`${r.position} — ${r.company}`, url:roleURL(r) }; if(navigator.share){ navigator.share(data).catch(()=>{}); } else { copyRoleLink(r); } }
-
-    // ---------- UX helpers
     function toast(msg){ const d=document.createElement('div'); d.textContent=msg; d.style.position='fixed'; d.style.bottom='20px'; d.style.right='20px'; d.style.background='#111827'; d.style.color='#fff'; d.style.padding='10px 12px'; d.style.borderRadius='10px'; d.style.boxShadow='var(--shadow)'; d.style.zIndex='1000'; document.body.appendChild(d); setTimeout(()=>d.remove(),1500); }
-    function downloadICS(r){ const title=`${r.position} — ${r.company}`; const start=r.closes?new Date(r.closes):new Date(); const end=new Date(start.getTime()+60*60*1000); function toICSDate(d){const pad=n=>String(n).padStart(2,'0'); return d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+'00Z';} const desc=`${r.location} • ${cap(r.programme)}\nStatus: ${r.status}\nCreated by EngTrackr mock`; const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//EngTrackr//EN\nBEGIN:VEVENT\nUID:${r.id}-${Date.now()}@engtrackr\nDTSTAMP:${toICSDate(new Date())}\nSUMMARY:${title}\nDTSTART:${toICSDate(start)}\nDTEND:${toICSDate(end)}\nDESCRIPTION:${desc}\nEND:VEVENT\nEND:VCALENDAR`; const blob=new Blob([ics],{type:'text/calendar'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`${r.company.replace(/\s+/g,'_')}-${r.position.replace(/\s+/g,'_')}.ics`; a.click(); URL.revokeObjectURL(url); toast('Reminder file created. Add it to your calendar.'); }
-    let weekProgress=0; function bumpWeek(){ weekProgress=Math.min(100,weekProgress+25); document.getElementById('ringFG').setAttribute('stroke-dasharray', `${weekProgress} 100`); document.getElementById('ringNum').textContent=weekProgress+'%'; }
-    function fakeSubscribe(){ const v=document.getElementById('email').value.trim(); const m=document.getElementById('subMsg'); if(!v||!v.includes('@')){ m.textContent='Please enter a valid email.'; m.style.color='var(--warn)'; return;} m.textContent='Subscribed. Monday digests coming your way.'; m.style.color='var(--ink)'; toast('Subscribed to weekly digest'); bumpWeek(); }
+    function fakeSubscribe(){ const v=document.getElementById('email').value.trim(); const m=document.getElementById('subMsg'); if(!v||!v.includes('@')){ m.textContent='Please enter a valid email.'; m.style.color='var(--warn)'; return;} m.textContent='Subscribed. (Demo only — no emails will be sent.)'; m.style.color='var(--ink)'; toast('Subscribed'); }
 
     // ---------- Report issue
     let reportTarget=null;
@@ -439,7 +402,7 @@
     document.querySelectorAll('th[data-sort]').forEach(th=> th.addEventListener('click', ()=>{ state.sort=th.dataset.sort; render(); }));
     document.querySelectorAll('.tab').forEach(b=> b.addEventListener('click', ()=> setTab(b.dataset.view)) );
 
-    // ---------- Boot
+    // ---------- Boot (add lots of fake rows)
     document.addEventListener('DOMContentLoaded', ()=>{ try{ seedFake(120); }catch(e){ console.error(e); } setTab('all'); render(); });
   </script>
 </body>
