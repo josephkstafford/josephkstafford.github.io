@@ -627,36 +627,82 @@
 
 
     <!-- ======= Metrics & Tests ======= -->
-    <article id="metrics" class="card" aria-labelledby="metrics-title" style="margin-top:12px">
-      <div class="bd">
-        <div class="k">Metrics & tests</div>
-        <h2 id="metrics-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">Define success up front</h2>
+<article id="metrics" class="card" aria-labelledby="metrics-title" style="margin-top:12px">
+  <div class="bd">
+    <div class="k">Measure &amp; adapt</div>
+    <h2 id="metrics-title" style="margin:.1rem 0 .3rem; font-size:1.2rem">
+      A/B test — “Save” (A) vs “Track” (B)
+    </h2>
 
-        <div class="cols">
-          <div>
-            <div class="k">North-star</div>
-            <p class="lead" style="font-size:1rem; margin:.2rem 0 .6rem">“Qualified applications started” (or “Apply clicks” on verified links).</p>
+    <p class="lead" style="font-size:1rem; margin:.2rem 0 .6rem">
+      Tested two button labels to help people save one internship quickly. This was a label-only change.
+    </p>
 
-            <div class="k">Supporting metrics</div>
-            <ul class="list">
-              <li><strong>Eligibility decision time:</strong> median ≤ 5–7s (task test, n≥10).</li>
-              <li><strong>Find-an-open-role:</strong> ≥ 80% within 60s (usability test).</li>
-              <li><strong>Apply CTR:</strong> ≥ 30% from role view.</li>
-              <li><strong>Data freshness:</strong> ≥ 90% roles updated within 7 days (weekly audit).</li>
-            </ul>
-          </div>
-          <div>
-            <div class="k">Experiment plan</div>
-            <ul class="list">
-              <li>Instrument demo events (filter use, role view, apply click, reminder set).</li>
-              <li>A/B badge wording for faster fit-decisions.</li>
-              <li>Run 4-week test: send a weekly “Deadline Digest” to 20–30 students; success = fewer missed deadlines + more Apply/Remind than students without.</li>
-            </ul>
-          </div>
-        </div>
+    <div class="chips" style="margin:.25rem 0 .6rem">
+      <span class="chip">n = 12</span>
+      <span class="chip">100% success (A &amp; B)</span>
+      <span class="chip">B (“Track”) ~14% faster</span>
+      <span class="chip">Adopted for V2</span>
+    </div>
 
-              </div>
-    </article>
+    <div class="k">What we tested</div>
+    <ul class="list" style="margin:.25rem 0 1rem">
+      <li><strong>A = “Save”</strong> (label only)</li>
+      <li><strong>B = “Track”</strong> (label only)</li>
+    </ul>
+
+    <div class="k">Why</div>
+    <p style="margin:.25rem 0 1rem">
+      Use the clearest wording so students can spot the action quickly and save a role without thinking.
+    </p>
+
+    <div class="k">How we ran it</div>
+    <ul class="list" style="margin:.25rem 0 1rem">
+      <li><strong>Participants:</strong> n = 12, counter-balanced order.</li>
+      <li><strong>Task:</strong> “Find and save ONE role you like.”</li>
+      <li><strong>Success metric:</strong> saved any role within <strong>60 s</strong> (Y/N).</li>
+      <li><strong>Secondary metric:</strong> time to first save (seconds).</li>
+      <li><strong>Decision rule:</strong> if success is similar (≤10 pp), ship the faster option (≥2–4 s gain).</li>
+    </ul>
+
+    <div class="k">Results</div>
+    <p style="margin:.25rem 0 .5rem">
+      Both labels reached 100% success. “Track” was faster to first action.
+    </p>
+    <table class="t" style="width:100%; border-collapse:collapse; margin:.25rem 0 1rem">
+      <thead>
+        <tr>
+          <th style="text-align:left; padding:.5rem; border-top:1px solid var(--line); border-bottom:1px solid var(--line)">Metric</th>
+          <th style="text-align:left; padding:.5rem; border-top:1px solid var(--line); border-bottom:1px solid var(--line)">A — “Save”</th>
+          <th style="text-align:left; padding:.5rem; border-top:1px solid var(--line); border-bottom:1px solid var(--line)">B — “Track”</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:.5rem; border-bottom:1px solid var(--line)">Success (≤60 s)</td>
+          <td style="padding:.5rem; border-bottom:1px solid var(--line)">12/12 (100%)</td>
+          <td style="padding:.5rem; border-bottom:1px solid var(--line)">12/12 (100%)</td>
+        </tr>
+        <tr>
+          <td style="padding:.5rem; border-bottom:1px solid var(--line)">Avg. time to first save</td>
+          <td style="padding:.5rem; border-bottom:1px solid var(--line)">14 s</td>
+          <td style="padding:.5rem; border-bottom:1px solid var(--line)">12 s</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="k">Decision</div>
+    <p style="margin:.25rem 0 1rem">
+      We shipped <strong>B (“Track”)</strong> for V2. Same success, faster to first action (~2 s, ~14% quicker).
+    </p>
+
+    <div class="k">Impact</div>
+    <p style="margin:.25rem 0 0">
+      Clearer wording reduced scanning time with no drop in success. Users spotted “Track” quickly; a few hesitated on “Save.”
+    </p>
+  </div>
+</article>
+
 
     <!-- ======= Risks ======= -->
     <article id="risks" class="card" aria-labelledby="risks-title" style="margin-top:12px">
@@ -851,6 +897,7 @@
   </script>
 </body>
 </html>
+
 
 
 
