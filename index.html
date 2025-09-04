@@ -104,12 +104,12 @@
       background:radial-gradient(120% 120% at 0% 0%, #eef2ff 0, #fff 60%), linear-gradient(135deg, #e0e7ff, #fafafa);
       border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:#3730a3; font-weight:700;
     }
-    .feat-visual.is-logo{
-      background:
-        center/70% no-repeat var(--logo),
-        radial-gradient(120% 120% at 0% 0%, #eef2ff 0, #fff 60%),
-        linear-gradient(135deg, #e0e7ff, #fafafa);
-    }
+   .feat-visual.is-logo{
+  /* Solid white backdrop that fills to the rounded border */
+  background:
+    center/80% no-repeat var(--logo),
+    #fff;
+}
 
     /* ======= Right column: photo + glance ======= */
     .aside-col{display:flex; flex-direction:column; gap:16px}
@@ -219,7 +219,7 @@
                 </div>
               </div>
               <div aria-hidden="true">
-                <div class="feat-visual is-logo" style="--logo:url('images/ET1.jpg'); background-image:var(--logo)"></div>
+                <div class="feat-visual is-logo" style="--logo:url('images/ET.jpg'); background-image:var(--logo)"></div>
               </div>
             </div>
           </article>
@@ -335,6 +335,7 @@
   <footer>© 2025 Joseph Stafford</footer>
 </body>
 </html>
+
 
 
 
